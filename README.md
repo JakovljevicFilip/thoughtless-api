@@ -8,7 +8,7 @@ Thoughtless API is the backend service for the Thoughtless frontend application.
 
 These instructions will get your local development environment up and running.
 
-### 1. Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone git@github.com:JakovljevicFilip/thoughtless-api.git
@@ -21,13 +21,24 @@ cd thoughtless-api
 cp .env.example .env
 ```
 
-### 3. Start the containers:
+### 3. Start the containers and install dependencies
 
 ```bash
-docker compose up -d
+# Start Docker containers (pass host UID/GID to prevent permission issues)
+WWWUSER=$(id -u) WWWGROUP=$(id -g) docker compose up -d
+
+# Install PHP dependencies inside the container
 docker compose exec laravel.test composer install
+
+# Generate the Laravel app key
 docker compose exec laravel.test php artisan key:generate
+
+# Run database migrations
 docker compose exec laravel.test php artisan migrate
 ```
 
----
+#### 🧼 Note: If you see a Git warning about “dubious ownership,” run this inside the container:
+
+```bash
+docker compose exec laravel.test git config --global --add safe.directory /var/www/html
+```
