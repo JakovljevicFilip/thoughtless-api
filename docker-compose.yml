@@ -97,6 +97,8 @@ services:
 networks:
     thoughtless:
         driver: bridge
+        name: thoughtless
+        external: true
 volumes:
     thoughtless-pgsql:
         driver: local

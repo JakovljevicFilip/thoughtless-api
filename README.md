@@ -24,6 +24,7 @@ cp .env.example .env
 ### 3. Start the containers and install dependencies
 
 ```bash
+docker network inspect thoughtless >/dev/null 2>&1 || docker network create thoughtless
 docker compose up -d
 docker compose exec laravel.test git config --global --add safe.directory /var/www/html
 docker compose exec laravel.test composer install
