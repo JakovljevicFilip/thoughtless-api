@@ -24,21 +24,9 @@ cp .env.example .env
 ### 3. Start the containers and install dependencies
 
 ```bash
-# Start Docker containers (pass host UID/GID to prevent permission issues)
-WWWUSER=$(id -u) WWWGROUP=$(id -g) docker compose up -d
-
-# Install PHP dependencies inside the container
-docker compose exec laravel.test composer install
-
-# Generate the Laravel app key
-docker compose exec laravel.test php artisan key:generate
-
-# Run database migrations
-docker compose exec laravel.test php artisan migrate
-```
-
-#### 🧼 Note: If you see a Git warning about “dubious ownership,” run this inside the container:
-
-```bash
+docker compose up -d
 docker compose exec laravel.test git config --global --add safe.directory /var/www/html
+docker compose exec laravel.test composer install
+docker compose exec laravel.test php artisan key:generate
+docker compose exec laravel.test php artisan migrate
 ```
