@@ -49,5 +49,5 @@ chmod +x fix-permissions.sh
 Enter the main Laravel container shell:
 
 ```bash
-docker exec -it thoughtless-api bash
+docker exec -it --user sail thoughtless-api bash
 ```
