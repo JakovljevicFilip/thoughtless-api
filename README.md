@@ -31,3 +31,12 @@ docker compose exec laravel.test composer install
 docker compose exec laravel.test php artisan key:generate
 docker compose exec laravel.test php artisan migrate
 ```
+
+### 🛠️ Fixing Permissions (Optional)
+
+If you create files inside the Docker container (e.g., using `sail artisan make:test`), you might not be able to edit them from your host machine.
+To fix file ownership, run:
+
+```bash
+./fix-permissions.sh
+```
