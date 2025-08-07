@@ -1,6 +1,6 @@
 services:
     thoughtless-api:
-        container_name: thoughtless
+        container_name: thoughtless-api
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
