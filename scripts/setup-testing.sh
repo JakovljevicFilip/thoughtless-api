@@ -2,10 +2,11 @@
 
 set -e
 
-echo "🔧 Setting up test environment with default Postgres credentials"
+echo "🔧 Setting up test environment with Postgres credentials from .env"
 
-PGUSER=postgres
-PGPASSWORD=password
+# Extract DB credentials from .env
+PGUSER=$(grep DB_USERNAME .env | cut -d '=' -f2)
+PGPASSWORD=$(grep DB_PASSWORD .env | cut -d '=' -f2)
 DBNAME=testing
 
 # Copy .env.testing if it doesn't exist
@@ -15,26 +16,18 @@ if [ ! -f .env.testing ]; then
 fi
 
 # Inject DB credentials into .env.testing
-grep -q '^DB_USERNAME=' .env.testing && \
-  sed -i "s/^DB_USERNAME=.*/DB_USERNAME=$PGUSER/" .env.testing || \
-  echo "DB_USERNAME=$PGUSER" >> .env.testing
-
-grep -q '^DB_PASSWORD=' .env.testing && \
-  sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$PGPASSWORD/" .env.testing || \
-  echo "DB_PASSWORD=$PGPASSWORD" >> .env.testing
-
-grep -q '^DB_DATABASE=' .env.testing && \
-  sed -i "s/^DB_DATABASE=.*/DB_DATABASE=$DBNAME/" .env.testing || \
-  echo "DB_DATABASE=$DBNAME" >> .env.testing
+sed -i "s/^DB_USERNAME=.*/DB_USERNAME=$PGUSER/" .env.testing
+sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$PGPASSWORD/" .env.testing
+sed -i "s/^DB_DATABASE=.*/DB_DATABASE=$DBNAME/" .env.testing
 
 # Create the 'testing' database inside pgsql container
-echo "🛢️ Creating 'testing' database (ignoring error if it exists)..."
+echo "🛢️ Creating '$DBNAME' database (ignoring error if it exists)..."
 docker compose exec -e PGPASSWORD="$PGPASSWORD" pgsql psql -U "$PGUSER" -c "CREATE DATABASE $DBNAME;" || {
-  echo "⚠️  Database may already exist. Continuing..."
+  echo "⚠️  Database may already exist or user lacks permission. Continuing..."
 }
 
-# Run test migrations
+# Run test migrations using Sail
 echo "📦 Running test migrations..."
-./vendor/bin/sail artisan migrate --env=testing
+docker compose exec thoughtless-api php artisan migrate --env=testing
 
 echo "✅ Test environment setup complete!"
