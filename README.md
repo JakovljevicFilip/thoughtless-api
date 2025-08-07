@@ -26,8 +26,8 @@ cp .env.example .env
 ```bash
 docker network inspect thoughtless >/dev/null 2>&1 || docker network create thoughtless
 docker compose up -d
-docker compose exec laravel.test git config --global --add safe.directory /var/www/html
-docker compose exec laravel.test composer install
-docker compose exec laravel.test php artisan key:generate
-docker compose exec laravel.test php artisan migrate
+docker compose exec thoughtless-api git config --global --add safe.directory /var/www/html
+&& docker compose exec thoughtless-api composer install
+&& docker compose exec thoughtless-api php artisan key:generate
+&& docker compose exec thoughtless-api php artisan migrate
 ```
