@@ -31,6 +31,19 @@ docker compose exec thoughtless-api composer install && \
 docker compose exec thoughtless-api php artisan key:generate && \
 docker compose exec thoughtless-api php artisan migrate
 ```
+
+---
+
+### ✅ 4. Set up the testing database (for running tests)
+
+Laravel uses a separate database called `testing` when running tests.
+A helper script is included to automate the setup:
+
+```bash
+chmod +x scripts/setup-testing.sh
+./scripts/setup-testing.sh
+```
+
 ---
 
 ### 🧰 Useful Commands
