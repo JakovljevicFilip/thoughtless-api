@@ -31,3 +31,12 @@ docker compose exec thoughtless-api composer install && \
 docker compose exec thoughtless-api php artisan key:generate && \
 docker compose exec thoughtless-api php artisan migrate
 ```
+---
+
+### 🧰 Useful Commands
+
+Enter the main Laravel container shell as user Sail:
+
+```bash
+docker exec -it --user sail thoughtless-api bash
+```
