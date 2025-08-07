@@ -1,5 +1,6 @@
 services:
-    laravel.test:
+    thoughtless-api:
+        container_name: thoughtless
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
