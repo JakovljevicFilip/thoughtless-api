@@ -33,20 +33,9 @@ docker compose exec thoughtless-api php artisan migrate
 ```
 ---
 
-### 🛠️ Fixing Permissions (Optional)
-If you create files inside the Docker container (e.g., using php artisan make:test), you might not be able to edit them from your host machine.
-To fix file ownership, run:
-
-```bash
-chmod +x fix-permissions.sh
-./fix-permissions.sh
-```
-
----
-
 ### 🧰 Useful Commands
 
-Enter the main Laravel container shell:
+Enter the main Laravel container shell as user Sail:
 
 ```bash
 docker exec -it --user sail thoughtless-api bash
