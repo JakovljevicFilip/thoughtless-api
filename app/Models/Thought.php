@@ -16,7 +16,9 @@ class Thought extends Model
     protected static function booted(): void
     {
         static::creating(function ($model) {
-            $model->id = (string) Str::uuid();
+            if (! $model->id) {
+                $model->id = (string) Str::uuid();
+            }
         });
     }
 }
