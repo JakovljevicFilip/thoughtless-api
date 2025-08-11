@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\ThoughtController;
+use App\Http\Controllers\Api\CreateThoughtController;
 
-Route::post('/thoughts', [ThoughtController::class, 'store']);
+Route::post('/thoughts', [CreateThoughtController::class, 'store']);
