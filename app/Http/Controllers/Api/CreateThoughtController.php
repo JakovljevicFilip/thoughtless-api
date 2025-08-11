@@ -7,7 +7,7 @@ use App\Http\Requests\StoreThoughtRequest;
 use App\Models\Thought;
 use Illuminate\Http\JsonResponse;
 
-class ThoughtController extends Controller
+class CreateThoughtController extends Controller
 {
     public function store(StoreThoughtRequest $request): JsonResponse
     {
