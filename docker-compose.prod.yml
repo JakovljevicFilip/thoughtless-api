@@ -10,7 +10,7 @@ services:
       - .env
     volumes:
       - ./storage:/var/www/html/storage
-      - ./.env:/var/www/html/.env:ro
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
     networks:
       - thoughtless
     depends_on:
@@ -23,8 +23,6 @@ services:
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - ./public:/var/www/html/public:ro
-      - ./storage:/var/www/html/storage:ro
-      - ./.env:/var/www/html/.env:ro
     networks:
       - thoughtless
       - traefik_proxy
@@ -37,33 +35,6 @@ services:
       - "traefik.http.routers.backend-http.rule=Host(`api.grozdan.app`)"
       - "traefik.http.routers.backend-http.entrypoints=web"
       - "traefik.http.routers.backend-http.middlewares=redirect-https"
-
-  queue:
-    image: thoughtless-php
-    command: sh -lc "php artisan queue:work --verbose --tries=3 --timeout=90"
-    env_file:
-      - .env
-    volumes:
-      - ./storage:/var/www/html/storage
-      - ./.env:/var/www/html/.env:ro
-    networks:
-      - thoughtless
-    depends_on:
-      - php
-      - redis
-
-  scheduler:
-    image: thoughtless-php
-    command: sh -lc "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
-    env_file:
-      - .env
-    volumes:
-      - ./storage:/var/www/html/storage
-      - ./.env:/var/www/html/.env:ro
-    networks:
-      - thoughtless
-    depends_on:
-      - php
 
   pgsql:
     image: postgres:14
