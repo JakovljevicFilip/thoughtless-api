@@ -1,5 +1,5 @@
 services:
-  php:
+  thoughtless-api:
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
