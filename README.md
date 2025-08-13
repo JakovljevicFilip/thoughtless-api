@@ -5,9 +5,9 @@ It is built using **Laravel** and runs in a Dockerized environment using **Larav
 
 ---
 
-## 🖥 Local Setup
+## 📦 Common Steps (Local & Server)
 
-Follow these steps to get your development environment up and running without build errors on a fresh install.
+Follow these steps first for **any** environment.
 
 ### 1. Clone the repository
 
@@ -22,15 +22,29 @@ cd thoughtless-api
 cp .env.example .env
 ```
 
-### 3. Install Composer dependencies (before building containers)
+---
 
+## 🖥 Local Setup
+
+These steps prepare your local development environment without build errors on a fresh install.
+
+### 1. Install Composer dependencies
+
+If you **don’t have PHP locally**:
 ```bash
 docker run --rm -v $(pwd):/app composer install
 ```
 
+If you **do have PHP locally**:
+```bash
+composer install
+```
+
 ---
 
-### 4. Create shared Docker network
+### 2. Create shared Docker network
+
+This allows Thoughtless API to communicate with the Thoughtless frontend during development:
 
 ```bash
 docker network inspect thoughtless >/dev/null 2>&1 || docker network create thoughtless
@@ -38,7 +52,7 @@ docker network inspect thoughtless >/dev/null 2>&1 || docker network create thou
 
 ---
 
-### 5. Start the containers
+### 3. Start the containers
 
 ```bash
 docker compose -f docker-compose.local.yml up -d --build
@@ -46,7 +60,7 @@ docker compose -f docker-compose.local.yml up -d --build
 
 ---
 
-### 6. Laravel setup inside the container
+### 4. Laravel setup inside the container
 
 ```bash
 docker compose -f docker-compose.local.yml exec thoughtless-api git config --global --add safe.directory /var/www/html
@@ -56,7 +70,7 @@ docker compose -f docker-compose.local.yml exec thoughtless-api php artisan migr
 
 ---
 
-### ✅ 7. Set up the testing database (for running tests)
+### ✅ 5. Set up the testing database (for running tests)
 
 ```bash
 chmod +x scripts/setup-testing.sh
@@ -78,22 +92,7 @@ docker exec -it --user sail thoughtless-api bash
 
 Follow these steps to deploy Thoughtless API on the server.
 
-### 1. Clone the repository
-
-```bash
-git clone git@github.com:JakovljevicFilip/thoughtless-api.git
-cd thoughtless-api
-```
-
-### 2. Copy the environment file
-
-```bash
-cp .env.example .env
-```
-
-> **⚠️ Reminder:** Open `.env` and set the proper values for your production environment before starting the app.
-
-### 3. Install Composer dependencies
+### 1. Install Composer dependencies
 
 ```bash
 docker run --rm -v $(pwd):/app composer install --no-dev --optimize-autoloader
@@ -101,7 +100,7 @@ docker run --rm -v $(pwd):/app composer install --no-dev --optimize-autoloader
 
 ---
 
-### 4. Build and start containers
+### 2. Build and start containers
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d --build
@@ -109,7 +108,7 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 ---
 
-### 5. Laravel production setup
+### 3. Laravel production setup
 
 ```bash
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan key:generate
