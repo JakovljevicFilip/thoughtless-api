@@ -22,8 +22,6 @@ cd thoughtless-api
 cp .env.example .env
 ```
 
-> **⚠️ Reminder:** Open `.env` and set the proper values for your local environment before starting the app.
-
 ### 3. Start the containers and install dependencies
 
 ```bash
