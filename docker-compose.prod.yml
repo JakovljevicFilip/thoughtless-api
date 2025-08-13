@@ -5,12 +5,14 @@ services:
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
+    image: thoughtless-php
+    env_file:
+      - .env
     volumes:
-      - .:/var/www/html
-    networks: [thoughtless]
+      - ./storage:/var/www/html/storage
+      - ./.env:/var/www/html/.env:ro
+    networks:
+      - thoughtless
     depends_on:
       - pgsql
       - redis
@@ -20,7 +22,9 @@ services:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
-      - .:/var/www/html:ro
+      - ./public:/var/www/html/public:ro
+      - ./storage:/var/www/html/storage:ro
+      - ./.env:/var/www/html/.env:ro
     networks:
       - thoughtless
       - traefik_proxy
@@ -35,44 +39,44 @@ services:
       - "traefik.http.routers.backend-http.middlewares=redirect-https"
 
   queue:
-    build:
-      context: .
-      dockerfile: ./docker/php/Dockerfile
+    image: thoughtless-php
     command: sh -lc "php artisan queue:work --verbose --tries=3 --timeout=90"
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
+    env_file:
+      - .env
     volumes:
-      - .:/var/www/html
-    networks: [thoughtless]
+      - ./storage:/var/www/html/storage
+      - ./.env:/var/www/html/.env:ro
+    networks:
+      - thoughtless
     depends_on:
       - php
       - redis
 
   scheduler:
-    build:
-      context: .
-      dockerfile: ./docker/php/Dockerfile
+    image: thoughtless-php
     command: sh -lc "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-      TZ: Europe/Belgrade
+    env_file:
+      - .env
     volumes:
-      - .:/var/www/html
-    networks: [thoughtless]
+      - ./storage:/var/www/html/storage
+      - ./.env:/var/www/html/.env:ro
+    networks:
+      - thoughtless
     depends_on:
       - php
 
   pgsql:
     image: postgres:14
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks: [thoughtless]
+    networks:
+      - thoughtless
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
       interval: 10s
@@ -84,7 +88,8 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redisdata:/data
-    networks: [thoughtless]
+    networks:
+      - thoughtless
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
