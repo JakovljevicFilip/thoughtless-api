@@ -107,8 +107,25 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ---
+### 3. Fix File Permissions
 
-### 3. Laravel production setup
+When deploying as a **non-root user** (e.g., `deploy`), you must ensure the PHP process (running as `www-data`) can write to Laravel’s `storage/` and `bootstrap/cache/` directories.
+
+Run the following commands after cloning or pulling updates:
+
+```bash
+docker compose -f docker-compose.prod.yml exec thoughtless-api chown -R www-data:www-data storage bootstrap/cache
+docker compose -f docker-compose.prod.yml exec thoughtless-api chmod -R ug+rwx storage bootstrap/cache
+docker compose -f docker-compose.prod.yml exec thoughtless-api \
+  chown -R www-data:www-data storage/logs
+```
+---
+
+> ⚠️ This step is **not needed when running as root**, but required when deploying as another user.
+
+---
+
+### 4. Laravel production setup
 
 ```bash
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan key:generate
@@ -117,8 +134,6 @@ docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan confi
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan route:cache
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan view:cache
 ```
-
----
 
 ### 🔍 Useful Production Commands
 

@@ -23,11 +23,6 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Install dependencies (prod)
 RUN composer install --no-dev --optimize-autoloader
 
-# Cache Laravel config/routes/views
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
 # Copy Supervisor config
 COPY ./docker/php/supervisord.ini /etc/supervisor/conf.d/supervisord.conf
 
