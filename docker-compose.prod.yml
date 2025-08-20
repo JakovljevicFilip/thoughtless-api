@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: ./docker/php/Dockerfile
     image: thoughtless-php
-    env_file:
-      - .env
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
