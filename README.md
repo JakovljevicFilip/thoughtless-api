@@ -116,7 +116,14 @@ Run the following commands after cloning or pulling updates:
 ```bash
 docker compose -f docker-compose.prod.yml exec thoughtless-api chown -R www-data:www-data storage bootstrap/cache
 docker compose -f docker-compose.prod.yml exec thoughtless-api chmod -R ug+rwx storage bootstrap/cache
+docker compose -f docker-compose.prod.yml exec thoughtless-api \
+  chown -R www-data:www-data storage/logs
 ```
+---
+
+> ⚠️ This step is **not needed when running as root**, but required when deploying as another user.
+
+---
 
 ### 4. Laravel production setup
 
@@ -127,12 +134,6 @@ docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan confi
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan route:cache
 docker compose -f docker-compose.prod.yml exec thoughtless-api php artisan view:cache
 ```
-
----
-
-> ⚠️ This step is **not needed when running as root**, but required when deploying as another user.
-
----
 
 ### 🔍 Useful Production Commands
 
