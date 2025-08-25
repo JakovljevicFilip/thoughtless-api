@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\Thoughts\CreateThoughtController;
+use App\Http\Controllers\Api\Thoughts\DeleteThoughtController;
+use App\Http\Controllers\Api\Thoughts\ListingThoughtController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CreateThoughtController;
-use App\Http\Controllers\Api\ListingThoughtController;
-use App\Http\Controllers\Api\DeleteThoughtController;
 
 Route::prefix('thoughts')->group(function () {
     Route::post('/', [CreateThoughtController::class, 'store']);
