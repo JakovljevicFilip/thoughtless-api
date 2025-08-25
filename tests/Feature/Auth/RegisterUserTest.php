@@ -40,4 +40,20 @@ class RegisterUserTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['first_name', 'last_name', 'email']);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fails_if_email_is_invalid(): void
+    {
+        $payload = [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'email'      => 'not-an-email',
+            'password'   => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
+    }
 }
