@@ -9,6 +9,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+
+    public const MAX_FIRST_NAME_LENGTH = 100;
+    public const MAX_LAST_NAME_LENGTH  = 100;
+    public const MAX_EMAIL_LENGTH      = 255;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 

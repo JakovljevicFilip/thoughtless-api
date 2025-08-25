@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterUserRequest extends FormRequest
@@ -14,11 +15,10 @@ class RegisterUserRequest extends FormRequest
 
     public function rules(): array
     {
-        // TODO: Add max characters.
         return [
-            'first_name' => ['required', 'string'],
-            'last_name'  => ['required', 'string'],
-            'email'      => ['required', 'email'],
+            'first_name' => ['required', 'string', 'max:' . User::MAX_FIRST_NAME_LENGTH],
+            'last_name'  => ['required', 'string', 'max:' . User::MAX_LAST_NAME_LENGTH],
+            'email'      => ['required', 'email', 'max:' . User::MAX_EMAIL_LENGTH],
             'password'   => ['required', 'string'],
             'password_confirmation' => ['required', 'string', 'same:password'],
         ];
