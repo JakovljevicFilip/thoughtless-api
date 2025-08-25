@@ -5,14 +5,24 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
-class RegisterUserController extends Controller
+final class RegisterUserController extends Controller
 {
     public function store(RegisterUserRequest $request): JsonResponse
     {
         $data = $request->validated();
 
-        return response()->json(null, 204);
+        $user = User::create([
+            'name'     => $data['first_name'] . ' ' . $data['last_name'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+
+        // TODO: Add confirmation email.
+
+        return response()->json(['id' => $user->id], 201);
     }
 }

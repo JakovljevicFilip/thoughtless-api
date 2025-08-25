@@ -94,4 +94,24 @@ class RegisterUserTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['email']);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function a_user_can_register(): void
+    {
+        $payload = [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'email'      => 'john.doe@example.com',
+            'password'   => 'StrongPass1!',
+            'password_confirmation' => 'StrongPass1!',
+        ];
+
+        $response = $this->postJson('/api/user/register', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'john.doe@example.com',
+        ]);
+    }
 }
