@@ -73,4 +73,25 @@ class RegisterUserTest extends TestCase
             ->assertJsonValidationErrors(['password_confirmation']);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fails_if_email_is_not_unique(): void
+    {
+        $existingEmail = 'john@example.com';
+
+        User::factory()->create([
+            'email' => $existingEmail,
+        ]);
+
+        $payload = [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'email'      => $existingEmail,
+            'password'   => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
+    }
 }
