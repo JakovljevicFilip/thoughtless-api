@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Feature\Thought;
 
 use Database\Seeders\Test\ThoughtSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
