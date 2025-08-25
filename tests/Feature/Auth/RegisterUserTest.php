@@ -56,4 +56,21 @@ class RegisterUserTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['email']);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fails_if_passwords_do_not_match(): void
+    {
+        $payload = [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'email'      => 'john@example.com',
+            'password'   => 'password123',
+            'password_confirmation' => 'different123',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['password_confirmation']);
+    }
+
 }
