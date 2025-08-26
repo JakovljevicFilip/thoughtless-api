@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Thoughts;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreThoughtRequest;
+use App\Http\Requests\Thoughts\StoreThoughtRequest;
 use App\Models\Thought;
 use Illuminate\Http\JsonResponse;
 

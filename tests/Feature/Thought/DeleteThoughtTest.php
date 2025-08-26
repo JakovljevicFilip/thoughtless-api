@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature\Thought;
 
 use Database\Seeders\Test\ThoughtSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
