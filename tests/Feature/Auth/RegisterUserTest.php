@@ -102,9 +102,8 @@ class RegisterUserTest extends TestCase
             'first_name' => 'John',
             'last_name'  => 'Doe',
             'email'      => 'john.weak@example.com',
-            // too short, no symbol, no uppercase
-            'password'   => 'password', // ggignore
-            'password_confirmation' => 'password',
+            'password'   => 'aaa123', // too short, no symbol, no uppercase
+            'password_confirmation' => 'aaa123',
         ];
 
         $this->postJson('/api/user/register', $payload)
