@@ -1,0 +1,5 @@
+# .gitguardian.yaml
+ignore_detectors:
+  - name: Generic Password
+    paths:
+      - "tests/**"
