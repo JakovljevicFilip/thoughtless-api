@@ -102,7 +102,8 @@ class RegisterUserTest extends TestCase
             'first_name' => 'John',
             'last_name'  => 'Doe',
             'email'      => 'john.weak@example.com',
-            'password'   => 'password',      // too short, no symbol, no uppercase
+            // too short, no symbol, no uppercase
+            'password'   => 'password', // ggignore
             'password_confirmation' => 'password',
         ];
 
