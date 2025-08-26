@@ -96,6 +96,22 @@ class RegisterUserTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_rejects_weak_passwords(): void
+    {
+        $payload = [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'email'      => 'john.weak@example.com',
+            'password'   => 'aaa123',      // too short, no symbol, no uppercase
+            'password_confirmation' => 'aaa123',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['password']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function a_user_can_register(): void
     {
         $payload = [
