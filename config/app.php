@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Suite Name
+    |--------------------------------------------------------------------------
+    |
+    | This value represents the suite or product family name that your
+    | application belongs to. It may be used in emails, notifications,
+    | or any other UI element where you want to refer to the broader
+    | suite rather than the specific application name.
+    |
+    */
+
+    'suite_name' => env('APP_SUITE_NAME', 'App Suite'),
 ];
