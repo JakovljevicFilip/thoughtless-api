@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth;
 
+use App\Mail\ConfirmationMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegisterUserTest extends TestCase
@@ -129,5 +131,26 @@ class RegisterUserTest extends TestCase
         $this->assertDatabaseHas('users', [
             'email' => 'john.doe@example.com',
         ]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function a_confirmation_email_is_sent_after_registration(): void
+    {
+        Mail::fake();
+
+        $payload = [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'jane.doe@example.com',
+            'password'   => 'StrongPass1!',
+            'password_confirmation' => 'StrongPass1!',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(201);
+
+        Mail::assertSent(ConfirmationMail::class, function ($mail) use ($payload) {
+            return $mail->hasTo($payload['email']);
+        });
     }
 }

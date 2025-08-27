@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Mail\ConfirmationMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 final class RegisterUserController extends Controller
 {
@@ -21,7 +23,7 @@ final class RegisterUserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        // TODO: Add confirmation email.
+        Mail::to($user->email)->send(new ConfirmationMail($user));
 
         return response()->json(['id' => $user->id], 201);
     }
