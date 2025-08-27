@@ -153,4 +153,28 @@ class RegisterUserTest extends TestCase
             return $mail->hasTo($payload['email']);
         });
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function confirmation_email_includes_plain_text_fallback(): void
+    {
+        $user = User::factory()->make([
+            'first_name' => 'Alice',
+            'email' => 'alice@example.com',
+        ]);
+
+        $mailable = new ConfirmationMail($user);
+
+        // Render HTML
+        $html = $mailable->render();
+        $this->assertStringContainsString('Confirm Your Email', $html);
+
+        // Render plain text
+        $text = view($mailable->textView, $mailable->buildViewData())->render();
+        $this->assertStringContainsString('Confirm Your Email', $text);
+
+        // Both should contain the link
+        $verifyUrl = url('/verify?email=' . urlencode($user->email));
+        $this->assertStringContainsString($verifyUrl, $html);
+        $this->assertStringContainsString($verifyUrl, $text);
+    }
 }

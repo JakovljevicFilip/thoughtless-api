@@ -13,15 +13,12 @@ final class ConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(
-        public User $user
-    ) {}
+    public function __construct(public User $user) {}
 
     public function build(): self
     {
-        return $this->subject('Confirm your account')
-            ->markdown('emails.auth.confirmation', [
-                'suiteName' => config('app.suite_name'),
-            ]);
+        return $this->subject('Welcome to ' . config('app.suite_name'))
+            ->view('emails.auth.confirmation.confirmation')
+            ->text('emails.auth.confirmation.confirmation_plain');
     }
 }
