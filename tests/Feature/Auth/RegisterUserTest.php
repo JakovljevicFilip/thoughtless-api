@@ -5,8 +5,10 @@ namespace Tests\Feature\Auth;
 
 use App\Mail\ConfirmationMail;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class RegisterUserTest extends TestCase
@@ -134,9 +136,9 @@ class RegisterUserTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_confirmation_email_is_sent_after_registration(): void
+    public function a_verification_notification_is_sent_after_registration(): void
     {
-        Mail::fake();
+        Notification::fake();
 
         $payload = [
             'first_name' => 'Jane',
@@ -149,9 +151,29 @@ class RegisterUserTest extends TestCase
         $this->postJson('/api/user/register', $payload)
             ->assertStatus(201);
 
-        Mail::assertSent(ConfirmationMail::class, function ($mail) use ($payload) {
-            return $mail->hasTo($payload['email']);
-        });
+        $user = User::where('email', $payload['email'])->firstOrFail();
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function email_is_not_verified_after_registration(): void
+    {
+        $payload = [
+            'first_name' => 'Eve',
+            'last_name'  => 'Tester',
+            'email'      => 'eve.tester@example.com',
+            'password'   => 'StrongPass1!',
+            'password_confirmation' => 'StrongPass1!',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $payload['email'],
+            'email_verified_at' => null, // ✅ ensures DB column is NULL
+        ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -176,5 +198,34 @@ class RegisterUserTest extends TestCase
         $verifyUrl = url('/verify?email=' . urlencode($user->email));
         $this->assertStringContainsString($verifyUrl, $html);
         $this->assertStringContainsString($verifyUrl, $text);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function registration_provides_valid_verification_url(): void
+    {
+        Notification::fake();
+
+        $payload = [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'jane.valid@example.com',
+            'password'   => 'StrongPass1!',
+            'password_confirmation' => 'StrongPass1!',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(201);
+
+        $user = User::where('email', $payload['email'])->firstOrFail();
+
+        Notification::assertSentTo($user, VerifyEmail::class, function (VerifyEmail $notification) use ($user) {
+            $mail = (string) $notification->toMail($user)->render();
+
+            $this->assertStringContainsString('/api/email/verify/' . $user->getKey(), $mail);
+            $this->assertStringContainsString(sha1($user->getEmailForVerification()), $mail);
+            $this->assertStringContainsString('signature=', $mail);
+
+            return true;
+        });
     }
 }
