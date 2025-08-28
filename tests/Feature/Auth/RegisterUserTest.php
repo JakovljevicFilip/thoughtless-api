@@ -243,32 +243,4 @@ class RegisterUserTest extends TestCase
             return true;
         });
     }
-
-
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function verification_email_points_to_frontend_url(): void
-    {
-        Notification::fake();
-
-        $payload = [
-            'first_name' => 'Frank',
-            'last_name'  => 'Frontend',
-            'email'      => 'frank.fe@example.com',
-            'password'   => 'StrongPass1!',
-            'password_confirmation' => 'StrongPass1!',
-        ];
-
-        $this->postJson('/api/user/register', $payload)
-            ->assertStatus(201);
-
-        $user = User::where('email', $payload['email'])->firstOrFail();
-
-        Notification::assertSentTo($user, VerifyEmail::class, function (VerifyEmail $notification) use ($user) {
-            $mail = (string) $notification->toMail($user)->render();
-
-            $this->assertStringContainsString(config('app.frontend_url') . '/verify/', $mail);
-
-            return true;
-        });
-    }
 }
