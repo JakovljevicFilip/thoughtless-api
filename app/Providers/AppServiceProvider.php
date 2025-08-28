@@ -22,9 +22,22 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
+            $parsed = parse_url($url);
+            parse_str($parsed['query'] ?? '', $query);
+
+            // Generate FE friendly token.
+            $token = base64_encode(json_encode([
+                'id'   => $notifiable->getKey(),
+                'hash' => sha1($notifiable->getEmailForVerification()),
+                'sig'  => $query['signature'] ?? null,
+                'exp'  => $query['expires'] ?? null,
+            ]));
+
+            $frontendUrl = rtrim(config('app.frontend_url'), '/') . '/verify/' . $token;
+
             $viewData = [
                 'suite'     => config('app.suite_name'),
-                'verifyUrl' => $url,
+                'verifyUrl' => $frontendUrl,
                 'logo'      => asset('icons/favicon-512x512.png'),
                 'user'      => $notifiable,
             ];

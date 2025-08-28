@@ -136,4 +136,20 @@ return [
     */
 
     'suite_name' => env('APP_SUITE_NAME', 'App Suite'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Application URL
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the base URL of your frontend application (SPA or
+    | client). It is used when generating links that the end-user should
+    | interact with, such as email verification or password reset links.
+    | Unlike APP_URL, which points to the backend API, this should point
+    | to the public-facing frontend interface.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:9000'),
+
 ];
