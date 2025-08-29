@@ -58,4 +58,39 @@ class ResendVerificationEmailTest extends TestCase
         Notification::assertSentToTimes($user, VerifyEmail::class, 2);
         Carbon::setTestNow();
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cannot_resend_if_user_not_found(): void
+    {
+        $this->postJson('/api/email/resend', [
+            'id' => (string) \Illuminate\Support\Str::uuid(),
+        ])->assertStatus(422)
+        ->assertJsonValidationErrors('id');
+    }
+
+    public function cannot_resend_if_user_already_verified(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $this->postJson('/api/email/resend', [
+            'id' => (string) $user->id,
+        ])->assertStatus(422)
+        ->assertJsonValidationErrors('id');
+
+        Notification::assertNothingSent();
+    }
+
+    public function unverified_user_can_resend(): void
+    {
+        Notification::fake();
+        $user = User::factory()->unverified()->create();
+
+        $this->postJson('/api/email/resend', [
+            'id' => (string) $user->id,
+        ])->assertOk()
+            ->assertJson(['message' => 'Verification link resent.']);
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+    }
 }
