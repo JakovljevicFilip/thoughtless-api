@@ -2,38 +2,39 @@
 
 namespace App\Providers;
 
+use App\Tokens\EmailVerification\EmailVerificationToken;
+use App\Tokens\EmailVerification\EmailVerificationTokenFactory;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
+
         VerifyEmail::toMailUsing(function ($notifiable, string $url) {
-            $parsed = parse_url($url);
-            parse_str($parsed['query'] ?? '', $query);
+            $queryString = (string) parse_url($url, PHP_URL_QUERY);
 
-            // Generate FE friendly token.
-            $token = base64_encode(json_encode([
-                'id'   => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
-                'sig'  => $query['signature'] ?? null,
-                'exp'  => $query['expires'] ?? null,
-            ]));
+            $q = [];
+            parse_str($queryString, $q);
 
-            $frontendUrl = rtrim(config('app.frontend_url'), '/') . '/verify/' . $token;
+            $expires = isset($q['expires']) ? (int) $q['expires'] : null;
+
+            $expiresAt = $expires !== null
+                ? Carbon::createFromTimestamp($expires)
+                : now()->addHour();
+
+            $token = app(EmailVerificationTokenFactory::class)->make($notifiable, $expiresAt);
+
+            $frontendUrl = rtrim(config('app.frontend_url'), '/')
+                . '/verify/' . $notifiable->getKey() . '/' . $token;
 
             $viewData = [
                 'suite'     => config('app.suite_name'),

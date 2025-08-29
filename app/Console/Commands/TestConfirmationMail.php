@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\ConfirmationMail;
+use App\Mail\VerificationMail;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -15,7 +15,7 @@ final class TestConfirmationMail extends Command
     public function handle(): void
     {
         $user = User::firstOrFail();
-        Mail::to($user->email)->send(new ConfirmationMail($user));
+        Mail::to($user->email)->send(new VerificationMail($user));
         $this->info("Sent to {$user->email}");
     }
 }

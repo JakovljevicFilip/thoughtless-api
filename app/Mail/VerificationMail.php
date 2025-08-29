@@ -9,7 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-final class ConfirmationMail extends Mailable
+final class VerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Tests\Feature\Auth\Registration;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class RegistrationUserTest extends TestCase
@@ -45,5 +47,35 @@ class RegistrationUserTest extends TestCase
             'email' => $payload['email'],
             'email_verified_at' => null,
         ]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function verification_email_contains_expected_link_format(): void
+    {
+        Notification::fake();
+
+        $payload = [
+            'first_name' => 'Alice',
+            'last_name'  => 'Verify',
+            'email'      => 'alice.verify@example.com',
+            'password'   => 'StrongPass1!',
+            'password_confirmation' => 'StrongPass1!',
+        ];
+
+        $this->postJson('/api/user/register', $payload)->assertStatus(201);
+
+        $user = User::where('email', $payload['email'])->firstOrFail();
+
+        Notification::assertSentTo($user, VerifyEmail::class, function (VerifyEmail $notification, array $channels) use ($user) {
+            $mail = $notification->toMail($user);
+            $rendered = (string) $mail->render();
+
+            $feUrl   = preg_quote(rtrim(config('app.frontend_url'), '/'), '/');
+            $pattern = "/{$feUrl}\/verify\/{$user->id}\/[A-Za-z0-9=_\-]+/";
+
+            $this->assertMatchesRegularExpression($pattern, $rendered);
+
+            return true;
+        });
     }
 }
