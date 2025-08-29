@@ -123,4 +123,33 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Suite Name
+    |--------------------------------------------------------------------------
+    |
+    | This value represents the suite or product family name that your
+    | application belongs to. It may be used in emails, notifications,
+    | or any other UI element where you want to refer to the broader
+    | suite rather than the specific application name.
+    |
+    */
+
+    'suite_name' => env('APP_SUITE_NAME', 'App Suite'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Application URL
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the base URL of your frontend application (SPA or
+    | client). It is used when generating links that the end-user should
+    | interact with, such as email verification or password reset links.
+    | Unlike APP_URL, which points to the backend API, this should point
+    | to the public-facing frontend interface.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:9000'),
+
 ];

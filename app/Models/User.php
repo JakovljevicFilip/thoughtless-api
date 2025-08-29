@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     public const MAX_FIRST_NAME_LENGTH = 100;
     public const MAX_LAST_NAME_LENGTH  = 100;
     public const MAX_EMAIL_LENGTH      = 255;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     /**
      * UUID is not auto-incrementing, so we disable incrementing
@@ -61,13 +63,11 @@ class User extends Authenticatable
     /**
      * Auto-generate UUID when creating new users.
      */
-    protected static function boot()
+    protected static function booted(): void
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->{$model->getKeyName()})) {
-                $model->{$model->getKeyName()} = (string) Str::uuid();
+        static::creating(function (User $user) {
+            if (!$user->getKey()) {
+                $user->{$user->getKeyName()} = (string) Str::uuid();
             }
         });
     }

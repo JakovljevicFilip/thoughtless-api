@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,7 +22,7 @@ final class RegisterUserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        // TODO: Add confirmation email.
+        event(new Registered($user));
 
         return response()->json(['id' => $user->id], 201);
     }
