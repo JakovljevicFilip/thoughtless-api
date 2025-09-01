@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\RegisterUserController;
 use App\Http\Controllers\Api\Auth\ResendVerificationController;
 use App\Http\Controllers\Api\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\Auth\Web\LoginWebController;
 use App\Http\Controllers\Api\Thoughts\CreateThoughtController;
 use App\Http\Controllers\Api\Thoughts\DeleteThoughtController;
 use App\Http\Controllers\Api\Thoughts\ListingThoughtController;
@@ -23,6 +24,10 @@ Route::prefix('email')->group(function () {
     Route::post('/resend', ResendVerificationController::class)
         ->middleware('throttle:1,10') // 1 request per 10 minutes per IP
         ->name('verification.resend');
+});
+
+Route::prefix('auth/web')->group(function () {
+    Route::post('/login', [LoginWebController::class, 'store']);
 });
 
 Route::prefix('thoughts')->group(function () {
