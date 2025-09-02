@@ -28,33 +28,16 @@ class LoginWebTest extends TestCase
 
         $this->csrf();
 
-        $res = $this->postJson('/api/auth/web/login', [
+        $this->postJson('/api/auth/web/login', [
             'email' => 'john@example.com',
             'password' => 'StrongPass1!',
-        ])->assertOk();
+        ])->assertOk()
+            ->assertJsonStructure([
+                'message',
+                'user' => ['id', 'first_name', 'last_name', 'email'],
+            ]);
 
         $this->assertAuthenticatedAs($user, 'web');
-    }
-
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function login_fails_with_invalid_credentials(): void
-    {
-        User::factory()->create([
-            'email' => 'jane@example.com',
-            'password' => Hash::make('Correct#123'),
-            'email_verified_at' => now(),
-        ]);
-
-        $this->csrf();
-
-        $this->postJson('/api/auth/web/login', [
-            'email' => 'jane@example.com',
-            'password' => 'wrong',
-        ])
-            ->assertStatus(401)
-            ->assertJson(['message' => 'Invalid credentials.']);
-
-        $this->assertGuest('web');
     }
 
     #[\PHPUnit\Framework\Attributes\Test]

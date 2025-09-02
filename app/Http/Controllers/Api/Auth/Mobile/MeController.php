@@ -16,6 +16,8 @@ final class MeController extends Controller
         return response()->json([
             'id'    => (string) $u->getKey(),
             'email' => $u->email,
+            'first_name' => $u->first_name,
+            'last_name' => $u->last_name,
         ]);
     }
 }
