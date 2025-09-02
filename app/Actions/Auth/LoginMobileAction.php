@@ -27,8 +27,6 @@ final class LoginMobileAction
             throw new RuntimeException('Please verify your email before continuing.', 403);
         }
 
-        // TODO: Go through the flow and add additional test cases.
-        // ensure only one active token per device
         $user->tokens()->where('name', $deviceName)->delete();
 
         $plain = $user->createToken($deviceName, ['*'])->plainTextToken;
