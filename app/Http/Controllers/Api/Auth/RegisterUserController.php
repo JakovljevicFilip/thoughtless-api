@@ -17,9 +17,10 @@ final class RegisterUserController extends Controller
         $data = $request->validated();
 
         $user = User::create([
-            'name'     => $data['first_name'] . ' ' . $data['last_name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
+            'first_name' => $data['first_name'],
+            'last_name'  => $data['last_name'],
+            'email'      => $data['email'],
+            'password'   => Hash::make($data['password']),
         ]);
 
         event(new Registered($user));

@@ -12,8 +12,8 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    public const MAX_FIRST_NAME_LENGTH = 100;
-    public const MAX_LAST_NAME_LENGTH  = 100;
+    public const MAX_FIRST_NAME_LENGTH = 255;
+    public const MAX_LAST_NAME_LENGTH  = 255;
     public const MAX_EMAIL_LENGTH      = 255;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -32,7 +32,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
     ];
