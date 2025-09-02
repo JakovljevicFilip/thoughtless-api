@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Feature\Auth\Logout\Web;
+namespace Feature\Auth\Logout;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
