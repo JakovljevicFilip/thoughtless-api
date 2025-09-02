@@ -19,7 +19,7 @@ final class LoginMobileController extends Controller
             $result = $this->login->execute(
                 (string) $request->input('email'),
                 (string) $request->input('password'),
-                $request->deviceName(),
+                (string) $request->input('device_name'),
             );
 
             return response()->json($result);

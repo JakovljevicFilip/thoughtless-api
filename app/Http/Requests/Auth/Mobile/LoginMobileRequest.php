@@ -14,12 +14,7 @@ final class LoginMobileRequest extends FormRequest
         return [
             'email'       => ['required', 'email'],
             'password'    => ['required', 'string'],
-            'device_name' => ['sometimes', 'string', 'max:255'],
+            'device_name' => ['required', 'string', 'max:255'],
         ];
-    }
-
-    public function deviceName(): string
-    {
-        return (string) $this->input('device_name', 'mobile');
     }
 }
