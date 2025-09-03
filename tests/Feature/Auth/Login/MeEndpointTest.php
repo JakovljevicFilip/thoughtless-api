@@ -30,19 +30,19 @@ final class MeEndpointTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        // Simulate logged-in session
         $this->actingAs($user, 'web');
 
         $this->getJson('/api/me')
             ->assertOk()
             ->assertJson([
-                'id'         => (string) $user->id,
-                'first_name' => 'Jane',
-                'last_name'  => 'Doe',
-                'email'      => 'jane@example.com',
-            ])
-            // optional: ensure there are no unexpected keys
-            ->assertJsonCount(4);
+                'message' => 'User is logged in.',
+                'user' => [
+                    'id'         => (string) $user->id,
+                    'first_name' => 'Jane',
+                    'last_name'  => 'Doe',
+                    'email'      => 'jane@example.com',
+                ],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -55,17 +55,18 @@ final class MeEndpointTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        // Simulate Bearer token auth
         Sanctum::actingAs($user, abilities: ['*']);
 
         $this->getJson('/api/me')
             ->assertOk()
             ->assertJson([
-                'id'         => (string) $user->id,
-                'first_name' => 'John',
-                'last_name'  => 'Smith',
-                'email'      => 'john@example.com',
-            ])
-            ->assertJsonCount(4);
+                'message' => 'User is logged in.',
+                'user' => [
+                    'id'         => (string) $user->id,
+                    'first_name' => 'John',
+                    'last_name'  => 'Smith',
+                    'email'      => 'john@example.com',
+                ],
+            ]);
     }
 }

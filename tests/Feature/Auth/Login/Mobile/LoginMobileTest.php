@@ -41,14 +41,18 @@ final class LoginMobileTest extends TestCase
             ]);
 
         $token = $res->json('access_token');
+
         $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/me')
             ->assertOk()
             ->assertJson([
-                'id'         => (string) $user->id,
-                'first_name' => 'John',
-                'last_name'  => 'Doe',
-                'email'      => 'john@example.com',
+                'message' => 'User is logged in.',
+                'user' => [
+                    'id'         => (string) $user->id,
+                    'first_name' => 'John',
+                    'last_name'  => 'Doe',
+                    'email'      => 'john@example.com',
+                ],
             ]);
     }
 
@@ -92,7 +96,10 @@ final class LoginMobileTest extends TestCase
         $this->withHeader('Authorization', "Bearer {$token2}")
             ->getJson('/api/me')
             ->assertOk()
-            ->assertJson(['id' => (string) $user->id]);
+            ->assertJson([
+                'message' => 'User is logged in.',
+                'user' => ['id' => (string) $user->id],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -125,12 +132,18 @@ final class LoginMobileTest extends TestCase
         $this->withHeader('Authorization', "Bearer {$t1}")
             ->getJson('/api/me')
             ->assertOk()
-            ->assertJson(['id' => (string) $user->id]);
+            ->assertJson([
+                'message' => 'User is logged in.',
+                'user' => ['id' => (string) $user->id],
+            ]);
 
         $this->withHeader('Authorization', "Bearer {$t2}")
             ->getJson('/api/me')
             ->assertOk()
-            ->assertJson(['id' => (string) $user->id]);
+            ->assertJson([
+                'message' => 'User is logged in.',
+                'user' => ['id' => (string) $user->id],
+            ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -157,6 +170,9 @@ final class LoginMobileTest extends TestCase
         $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/me')
             ->assertOk()
-            ->assertJson(['id' => (string) $user->id]);
+            ->assertJson([
+                'message' => 'User is logged in.',
+                'user' => ['id' => (string) $user->id],
+            ]);
     }
 }
