@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\Auth\Mobile\LoginMobileController;
 use App\Http\Controllers\Api\Auth\Mobile\LogoutMobileController;
+// TODO: I don't think that MeController is used only for mobile.
 use App\Http\Controllers\Api\Auth\Mobile\MeController;
 use App\Http\Controllers\Api\Auth\RegisterUserController;
 use App\Http\Controllers\Api\Auth\ResendVerificationController;
@@ -35,13 +36,13 @@ Route::prefix('auth/mobile')->group(function () {
     Route::post('/logout', [LogoutMobileController::class, 'store'])->middleware('auth:sanctum');
 });
 
-Route::middleware('auth:sanctum')->get('/me', MeController::class);
-
 Route::prefix('auth/web')->middleware('spa')->group(function () {
     Route::post('/login', [LoginWebController::class, 'store']);
     Route::post('/logout', [LogoutWebController::class, 'store'])
         ->middleware('auth:web');
 });
+
+Route::middleware('auth:sanctum')->get('/me', MeController::class);
 
 Route::prefix('thoughts')->group(function () {
     Route::post('/', [CreateThoughtController::class, 'store']);
