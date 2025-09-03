@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Auth\MeController;
 use App\Http\Controllers\Api\Auth\Mobile\LoginMobileController;
 use App\Http\Controllers\Api\Auth\Mobile\LogoutMobileController;
-// TODO: I don't think that MeController is used only for mobile.
-use App\Http\Controllers\Api\Auth\Mobile\MeController;
 use App\Http\Controllers\Api\Auth\RegisterUserController;
 use App\Http\Controllers\Api\Auth\ResendVerificationController;
 use App\Http\Controllers\Api\Auth\VerifyEmailController;
