@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-use App\Tokens\EmailVerification\EmailVerificationToken;
+use App\Actions\Auth\LoginMobileAction;
+use App\Actions\Auth\LoginWebAction;
+use App\Contracts\Auth\LoginMobileContract;
+use App\Contracts\Auth\LoginWebContract;
 use App\Tokens\EmailVerification\EmailVerificationTokenFactory;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(LoginMobileContract::class, LoginMobileAction::class);
+        $this->app->bind(LoginWebContract::class, LoginWebAction::class);
     }
 
     public function boot(): void

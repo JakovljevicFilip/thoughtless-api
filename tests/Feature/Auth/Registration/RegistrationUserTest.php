@@ -27,7 +27,11 @@ class RegistrationUserTest extends TestCase
         $this->postJson('/api/user/register', $payload)
             ->assertStatus(201);
 
-        $this->assertDatabaseHas('users', ['email' => 'john.doe@example.com']);
+        $this->assertDatabaseHas('users', [
+            'email'      => $payload['email'],
+            'first_name' => $payload['first_name'],
+            'last_name'  => $payload['last_name'],
+        ]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]

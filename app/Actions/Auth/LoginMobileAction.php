@@ -3,16 +3,21 @@ declare(strict_types=1);
 
 namespace App\Actions\Auth;
 
+use App\Contracts\Auth\LoginMobileContract;
+use App\Exceptions\Auth\EmailNotVerified;
+use App\Exceptions\Auth\InvalidCredentials;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use RuntimeException;
 
-final class LoginMobileAction
+final class LoginMobileAction implements LoginMobileContract
 {
     /**
-     * @return array{access_token: string, token_type: string, expires_in: int}
-     *
-     * @throws RuntimeException
+     * @return array{
+     *   access_token: string,
+     *   token_type: string,
+     *   expires_in: int|null,
+     *   user: array{id: string, first_name: string, last_name: string, email: string}
+     * }
      */
     public function execute(string $email, string $password, string $deviceName = 'mobile'): array
     {
@@ -20,24 +25,26 @@ final class LoginMobileAction
         $user = User::where('email', $email)->first();
 
         if (! $user || ! Hash::check($password, $user->password)) {
-            throw new RuntimeException('Invalid credentials.', 401);
+            throw new InvalidCredentials();
         }
-
         if (! $user->hasVerifiedEmail()) {
-            throw new RuntimeException('Please verify your email before continuing.', 403);
+            throw new EmailNotVerified();
         }
 
         $user->tokens()->where('name', $deviceName)->delete();
 
         $plain = $user->createToken($deviceName, ['*'])->plainTextToken;
 
-        $minutes = config('sanctum.expiration');
-        $expiresIn = $minutes ? $minutes * 60 : 0;
-
         return [
             'access_token' => $plain,
             'token_type'   => 'Bearer',
-            'expires_in'   => $expiresIn,
+            'expires_in'   => null,
+            'user' => [
+                'id'         => (string) $user->id,
+                'first_name' => $user->first_name,
+                'last_name'  => $user->last_name,
+                'email'      => $user->email,
+            ],
         ];
     }
 }
