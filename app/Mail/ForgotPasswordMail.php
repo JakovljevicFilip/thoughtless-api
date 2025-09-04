@@ -14,6 +14,7 @@ final class ForgotPasswordMail extends Mailable implements ShouldQueue
         public User $user,
         public string $resetUrl
     ) {
+        // TODO: Match email styling for registration and password change.
         $firstName = $this->user->first_name ?? $this->user->name ?? '';
 
         $this->subject = "Hey {$firstName}, did you forget your password?";
