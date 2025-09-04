@@ -25,6 +25,7 @@ final class ResetPasswordNotification extends Notification
             '/reset-password?token=' . $this->token .
             '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
-        return new ForgotPasswordMail($notifiable, $resetUrl);
+        return (new ForgotPasswordMail($notifiable, $resetUrl))
+            ->to($notifiable->getEmailForPasswordReset());
     }
 }

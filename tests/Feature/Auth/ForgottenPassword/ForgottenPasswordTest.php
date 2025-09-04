@@ -138,4 +138,16 @@ class ForgottenPasswordTest extends TestCase
         $html = view(is_array($mail->view) ? $mail->view['html'] : $mail->view, $data)->render();
         $this->assertStringContainsString("We've received a request", $html);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_actually_sends_a_password_reset_email_to_the_users_address()
+    {
+        $user = User::factory()->create(['email' => 'jane@example.com']);
+
+        $response = $this->postJson('/api/user/forgot-password', [
+            'email' => $user->email,
+        ]);
+
+        $response->assertStatus(200);
+    }
 }
