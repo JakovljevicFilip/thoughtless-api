@@ -19,6 +19,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('user')->group(function () {
     Route::post('/register', [RegisterUserController::class, 'store']);
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
 });
 
 Route::prefix('email')->group(function () {
@@ -47,9 +48,6 @@ Route::prefix('auth/web')->middleware('spa')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->get('/me', MeController::class);
-
-Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-    ->middleware('guest');
 
 Route::prefix('thoughts')->group(function () {
     Route::post('/', [CreateThoughtController::class, 'store']);

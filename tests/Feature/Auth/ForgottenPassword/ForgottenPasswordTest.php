@@ -15,7 +15,7 @@ class ForgottenPasswordTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_requires_an_email_address()
     {
-        $response = $this->postJson('/api/forgot-password', [
+        $response = $this->postJson('/api/user/forgot-password', [
             'email' => '',
         ]);
 
@@ -26,7 +26,7 @@ class ForgottenPasswordTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_requires_a_valid_email_address()
     {
-        $response = $this->postJson('/api/forgot-password', [
+        $response = $this->postJson('/api/user/forgot-password', [
             'email' => 'not-an-email',
         ]);
 
@@ -39,7 +39,7 @@ class ForgottenPasswordTest extends TestCase
     {
         Notification::fake();
 
-        $response = $this->postJson('/api/forgot-password', [
+        $response = $this->postJson('/api/user/forgot-password', [
             'email' => 'nonexistent@example.com',
         ]);
 
@@ -60,7 +60,7 @@ class ForgottenPasswordTest extends TestCase
             'email' => 'jane@example.com',
         ]);
 
-        $response = $this->postJson('/api/forgot-password', [
+        $response = $this->postJson('/api/user/forgot-password', [
             'email' => $user->email,
         ]);
 
@@ -84,7 +84,7 @@ class ForgottenPasswordTest extends TestCase
             'email' => 'jane@example.com',
         ]);
 
-        $this->postJson('/api/forgot-password', [
+        $this->postJson('/api/user/forgot-password', [
             'email' => $user->email,
         ]);
 
@@ -104,7 +104,7 @@ class ForgottenPasswordTest extends TestCase
             'email' => 'jane@example.com',
         ]);
 
-        $this->postJson('/api/forgot-password', ['email' => $user->email])
+        $this->postJson('/api/user/forgot-password', ['email' => $user->email])
             ->assertStatus(200);
 
         Notification::assertSentTo($user, ResetPasswordNotification::class);
