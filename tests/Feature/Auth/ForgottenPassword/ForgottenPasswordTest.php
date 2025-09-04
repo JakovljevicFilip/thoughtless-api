@@ -3,9 +3,9 @@
 namespace Tests\Feature\Auth\ForgottenPassword;
 
 use App\Models\User;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Tests\TestCase;
 
 class ForgottenPasswordTest extends TestCase
@@ -71,7 +71,71 @@ class ForgottenPasswordTest extends TestCase
 
         Notification::assertSentTo(
             $user,
-            ResetPassword::class
+            ResetPasswordNotification::class
         );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_creates_a_valid_password_token()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create([
+            'email' => 'jane@example.com',
+        ]);
+
+        $this->postJson('/api/forgot-password', [
+            'email' => $user->email,
+        ]);
+
+        $this->assertDatabaseHas('password_reset_tokens', [
+            'email' => $user->email,
+        ]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_uses_the_custom_reset_password_email_template()
+    {
+        Notification::fake();
+        config(['app.frontend_url' => 'http://localhost']);
+
+        $user = User::factory()->create([
+            'first_name' => 'Jane',
+            'email' => 'jane@example.com',
+        ]);
+
+        $this->postJson('/api/forgot-password', ['email' => $user->email])
+            ->assertStatus(200);
+
+        Notification::assertSentTo($user, ResetPasswordNotification::class);
+
+        $sent = Notification::sent($user, ResetPasswordNotification::class);
+        $this->assertNotEmpty($sent, 'No ResetPasswordNotification captured.');
+
+        /** @var ResetPasswordNotification $notification */
+        $notification = $sent->first();
+
+        $mail = $notification->toMail($user);
+
+        $expectedSubject = "Hey Jane, did you forget your password?";
+        $this->assertSame($expectedSubject, $mail->subject);
+
+        if (is_array($mail->view)) {
+            $this->assertSame('emails.auth.passwords.reset', $mail->view['html']);
+            $this->assertSame('emails.auth.passwords.reset_plain', $mail->view['text']);
+        } else {
+            $this->assertSame('emails.auth.passwords.reset', $mail->view);
+        }
+
+        $data = $mail->viewData ?? [];
+        $expectedUrl = rtrim(config('app.frontend_url'), '/') .
+            '/reset-password?token=' . $notification->token .
+            '&email=' . urlencode($user->email);
+
+        $this->assertSame($expectedUrl, $data['resetUrl'] ?? null);
+        $this->assertSame(config('app.suite_name'), $data['suite'] ?? null);
+
+        $html = view(is_array($mail->view) ? $mail->view['html'] : $mail->view, $data)->render();
+        $this->assertStringContainsString("We've received a request", $html);
     }
 }
