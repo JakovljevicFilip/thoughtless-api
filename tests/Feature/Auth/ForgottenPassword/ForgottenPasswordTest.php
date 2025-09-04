@@ -18,17 +18,17 @@ class ForgottenPasswordTest extends TestCase
             ->assertJsonValidationErrors('email');
     }
 
-//    #[\PHPUnit\Framework\Attributes\Test]
-//    public function it_requires_a_valid_email_address()
-//    {
-//        $response = $this->postJson('/api/forgot-password', [
-//            'email' => 'not-an-email',
-//        ]);
-//
-//        $response->assertStatus(422)
-//            ->assertJsonValidationErrors('email');
-//    }
-//
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_requires_a_valid_email_address()
+    {
+        $response = $this->postJson('/api/forgot-password', [
+            'email' => 'not-an-email',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('email');
+    }
+
 //    #[\PHPUnit\Framework\Attributes\Test]
 //    public function it_does_not_send_email_for_nonexistent_account_but_returns_generic_message()
 //    {
