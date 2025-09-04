@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\MeController;
 use App\Http\Controllers\Api\Auth\Mobile\LoginMobileController;
 use App\Http\Controllers\Api\Auth\Mobile\LogoutMobileController;
+use App\Http\Controllers\Api\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\Auth\RegisterUserController;
 use App\Http\Controllers\Api\Auth\ResendVerificationController;
 use App\Http\Controllers\Api\Auth\VerifyEmailController;
@@ -46,6 +47,9 @@ Route::prefix('auth/web')->middleware('spa')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->get('/me', MeController::class);
+
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->middleware('guest');
 
 Route::prefix('thoughts')->group(function () {
     Route::post('/', [CreateThoughtController::class, 'store']);
