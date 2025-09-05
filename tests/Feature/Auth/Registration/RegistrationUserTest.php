@@ -19,7 +19,7 @@ class RegistrationUserTest extends TestCase
         $payload = [
             'first_name' => 'John',
             'last_name'  => 'Doe',
-            'email'      => 'john.doe@example.com',
+            'email' => 'john.doe@gmail.com',
             'password'   => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
         ];
@@ -40,7 +40,7 @@ class RegistrationUserTest extends TestCase
         $payload = [
             'first_name' => 'Eve',
             'last_name'  => 'Tester',
-            'email'      => 'eve.tester@example.com',
+            'email' => 'john.doe@gmail.com',
             'password'   => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
         ];
@@ -61,7 +61,7 @@ class RegistrationUserTest extends TestCase
         $payload = [
             'first_name' => 'Alice',
             'last_name'  => 'Verify',
-            'email'      => 'alice.verify@example.com',
+            'email' => 'john.doe@gmail.com',
             'password'   => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
         ];

@@ -16,7 +16,7 @@ final class LoginWebRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'email'],
+            'email'    => ['required', 'email:rfc,dns'],
             'password' => ['required', 'string'],
             'remember' => ['sometimes', 'boolean'],
         ];

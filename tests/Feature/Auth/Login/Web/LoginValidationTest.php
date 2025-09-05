@@ -33,7 +33,7 @@ class LoginValidationTest extends TestCase
     public function remember_me_is_optional_boolean(): void
     {
         $this->postJson('/api/auth/web/login', [
-            'email' => 'john@example.com',
+            'email' => 'john.doe@gmail.com',
             'password' => 'StrongPass1!',
             'remember' => 'yes',
         ])

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
-class ForgottenPasswordTest extends TestCase
+class ForgottenPasswordRequestTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -40,7 +40,7 @@ class ForgottenPasswordTest extends TestCase
         Notification::fake();
 
         $response = $this->postJson('/api/user/forgot-password', [
-            'email' => 'nonexistent@example.com',
+            'email' => 'nonexistent@gmail.com',
         ]);
 
         $response->assertStatus(200)
@@ -57,7 +57,7 @@ class ForgottenPasswordTest extends TestCase
         Notification::fake();
 
         $user = User::factory()->create([
-            'email' => 'jane@example.com',
+            'email' => 'jane@gmail.com',
         ]);
 
         $response = $this->postJson('/api/user/forgot-password', [
@@ -81,7 +81,7 @@ class ForgottenPasswordTest extends TestCase
         Notification::fake();
 
         $user = User::factory()->create([
-            'email' => 'jane@example.com',
+            'email' => 'jane@gmail.com',
         ]);
 
         $this->postJson('/api/user/forgot-password', [
@@ -101,7 +101,7 @@ class ForgottenPasswordTest extends TestCase
 
         $user = User::factory()->create([
             'first_name' => 'Jane',
-            'email' => 'jane@example.com',
+            'email' => 'jane@gmail.com',
         ]);
 
         $this->postJson('/api/user/forgot-password', ['email' => $user->email])
@@ -142,7 +142,7 @@ class ForgottenPasswordTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_actually_sends_a_password_reset_email_to_the_users_address()
     {
-        $user = User::factory()->create(['email' => 'jane@example.com']);
+        $user = User::factory()->create(['email' => 'jane@gmail.com']);
 
         $response = $this->postJson('/api/user/forgot-password', [
             'email' => $user->email,

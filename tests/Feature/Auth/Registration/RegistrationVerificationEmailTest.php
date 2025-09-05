@@ -14,10 +14,11 @@ class RegistrationVerificationEmailTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function a_user_can_register(): void
     {
+        $email = 'john.doe@gmail.com';
         $payload = [
             'first_name' => 'John',
             'last_name'  => 'Doe',
-            'email'      => 'john.doe@example.com',
+            'email' => $email,
             'password'   => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
         ];
@@ -25,7 +26,7 @@ class RegistrationVerificationEmailTest extends TestCase
         $this->postJson('/api/user/register', $payload)
             ->assertStatus(201);
 
-        $this->assertDatabaseHas('users', ['email' => 'john.doe@example.com']);
+        $this->assertDatabaseHas('users', ['email' => $email]);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -34,7 +35,7 @@ class RegistrationVerificationEmailTest extends TestCase
         $payload = [
             'first_name' => 'Eve',
             'last_name'  => 'Tester',
-            'email'      => 'eve.tester@example.com',
+            'email' => 'john.doe@gmail.com',
             'password'   => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
         ];

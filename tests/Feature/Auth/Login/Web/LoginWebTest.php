@@ -21,7 +21,7 @@ class LoginWebTest extends TestCase
     public function user_can_login_and_get_session_cookie(): void
     {
         $user = User::factory()->create([
-            'email' => 'john@example.com',
+            'email' => 'john@gmail.com',
             'password' => Hash::make('StrongPass1!'),
             'email_verified_at' => now(),
         ]);
@@ -29,7 +29,7 @@ class LoginWebTest extends TestCase
         $this->csrf();
 
         $this->postJson('/api/auth/web/login', [
-            'email' => 'john@example.com',
+            'email' => 'john@gmail.com',
             'password' => 'StrongPass1!',
         ])->assertOk()
             ->assertJsonStructure([
@@ -44,7 +44,7 @@ class LoginWebTest extends TestCase
     public function unverified_users_cannot_login(): void
     {
         User::factory()->create([
-            'email' => 'alice@example.com',
+            'email' => 'john@gmail.com',
             'password' => Hash::make('StrongPass1!'),
             'email_verified_at' => null,
         ]);
@@ -52,7 +52,7 @@ class LoginWebTest extends TestCase
         $this->csrf();
 
         $this->postJson('/api/auth/web/login', [
-            'email' => 'alice@example.com',
+            'email' => 'john@gmail.com',
             'password' => 'StrongPass1!',
         ])
             ->assertStatus(403)
