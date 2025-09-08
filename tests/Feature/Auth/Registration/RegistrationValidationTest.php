@@ -55,6 +55,22 @@ class RegistrationValidationTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fail_strict_email_criteria(): void
+    {
+        $payload = [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'some.mail@mail',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ];
+
+        $this->postJson('/api/user/register', $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_fails_if_passwords_do_not_match(): void
     {
         $payload = [

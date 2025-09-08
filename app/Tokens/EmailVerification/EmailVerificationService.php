@@ -9,13 +9,23 @@ use Illuminate\Support\Facades\Auth;
 
 final class EmailVerificationService
 {
-    public function markVerifiedAndLogin(User $user): void
+    /**
+     * @return bool true if user was just verified, false if already verified
+     */
+    public function markVerifiedAndLogin(User $user): bool
     {
+        $justVerified = false;
+
         if (! $user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
             event(new Verified($user));
+
+            // Only log in on first-time verification
+            Auth::login($user);
+
+            $justVerified = true;
         }
 
-        Auth::login($user);
+        return $justVerified;
     }
 }

@@ -30,7 +30,7 @@ final class LoginWebControllerTest extends TestCase
         $this->app->instance(LoginWebContract::class, $mock);
 
         $this->postJson('/api/auth/web/login', [
-            'email' => 'x@example.com',
+            'email' => 'john.doe@gmail.com',
             'password' => 'nope',
         ])->assertStatus(401)->assertJson(['message' => 'Invalid credentials.']);
     }
@@ -45,7 +45,7 @@ final class LoginWebControllerTest extends TestCase
         $this->app->instance(LoginWebContract::class, $mock);
 
         $this->postJson('/api/auth/web/login', [
-            'email' => 'y@example.com',
+            'email' => 'jane.doe@gmail.com',
             'password' => 'ok',
         ])->assertStatus(403)->assertJson(['message' => 'Please verify your email before continuing.']);
     }
@@ -59,7 +59,7 @@ final class LoginWebControllerTest extends TestCase
             'id'         => '01990a69-a946-73e3-9049-6e5aa24131df',
             'first_name' => 'John',
             'last_name'  => 'Doe',
-            'email'      => 'john@example.com',
+            'email'      => 'john.doe@gmail.com',
         ]);
 
         $mock = Mockery::mock(LoginWebContract::class);
@@ -67,7 +67,7 @@ final class LoginWebControllerTest extends TestCase
         $this->app->instance(LoginWebContract::class, $mock);
 
         $this->postJson('/api/auth/web/login', [
-            'email' => 'john@example.com',
+            'email' => 'john.doe@gmail.com',
             'password' => 'StrongPass1!',
         ])->assertOk()->assertJson([
             'message' => 'Logged in.',
@@ -75,7 +75,7 @@ final class LoginWebControllerTest extends TestCase
                 'id'         => (string) $user->id,
                 'first_name' => 'John',
                 'last_name'  => 'Doe',
-                'email'      => 'john@example.com',
+                'email'      => 'john.doe@gmail.com',
             ],
         ]);
     }

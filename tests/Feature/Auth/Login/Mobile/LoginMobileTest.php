@@ -18,13 +18,13 @@ final class LoginMobileTest extends TestCase
         $user = User::factory()->create([
             'first_name'        => 'John',
             'last_name'         => 'Doe',
-            'email'             => 'john@example.com',
+            'email'             => 'john.doe@gmail.com',
             'password'          => Hash::make('StrongPass1!'),
             'email_verified_at' => now(),
         ]);
 
         $res = $this->postJson('/api/auth/mobile/login', [
-            'email'       => 'john@example.com',
+            'email'       => 'john.doe@gmail.com',
             'password'    => 'StrongPass1!',
             'device_name' => 'Pixel 7',
         ])->assertOk()
@@ -37,7 +37,7 @@ final class LoginMobileTest extends TestCase
             ->assertJsonFragment([
                 'first_name' => 'John',
                 'last_name'  => 'Doe',
-                'email'      => 'john@example.com',
+                'email'      => 'john.doe@gmail.com',
             ]);
 
         $token = $res->json('access_token');
@@ -51,7 +51,7 @@ final class LoginMobileTest extends TestCase
                     'id'         => (string) $user->id,
                     'first_name' => 'John',
                     'last_name'  => 'Doe',
-                    'email'      => 'john@example.com',
+                    'email'      => 'john.doe@gmail.com',
                 ],
             ]);
     }
@@ -63,13 +63,13 @@ final class LoginMobileTest extends TestCase
         config()->set('sanctum.stateful', []);
 
         $user = User::factory()->create([
-            'email'             => 'john@example.com',
+            'email'             => 'john.doe@gmail.com',
             'password'          => Hash::make('StrongPass1!'),
             'email_verified_at' => now(),
         ]);
 
         $r1 = $this->postJson('/api/auth/mobile/login', [
-            'email' => 'john@example.com',
+            'email' => 'john.doe@gmail.com',
             'password' => 'StrongPass1!',
             'device_name' => 'Pixel 7',
         ])->assertOk();
@@ -78,7 +78,7 @@ final class LoginMobileTest extends TestCase
         $this->assertDatabaseCount('personal_access_tokens', 1);
 
         $r2 = $this->postJson('/api/auth/mobile/login', [
-            'email' => 'john@example.com',
+            'email' => 'john.doe@gmail.com',
             'password' => 'StrongPass1!',
             'device_name' => 'Pixel 7',
         ])->assertOk();
@@ -108,20 +108,20 @@ final class LoginMobileTest extends TestCase
         config()->set('sanctum.stateful', []);
 
         $user = User::factory()->create([
-            'email'             => 'jane@example.com',
+            'email'             => 'john@gmail.com',
             'password'          => Hash::make('Correct#123'),
             'email_verified_at' => now(),
         ]);
 
         $r1 = $this->postJson('/api/auth/mobile/login', [
-            'email' => 'jane@example.com',
+            'email' => 'john@gmail.com',
             'password' => 'Correct#123',
             'device_name' => 'Pixel 7',
         ])->assertOk();
         $t1 = $r1->json('access_token');
 
         $r2 = $this->postJson('/api/auth/mobile/login', [
-            'email' => 'jane@example.com',
+            'email' => 'john@gmail.com',
             'password' => 'Correct#123',
             'device_name' => 'iPad',
         ])->assertOk();
@@ -152,13 +152,13 @@ final class LoginMobileTest extends TestCase
         config()->set('sanctum.expiration', null);
 
         $user = User::factory()->create([
-            'email'             => 'forever@example.com',
+            'email'             => 'forever@gmail.com',
             'password'          => Hash::make('StrongPass1!'),
             'email_verified_at' => now(),
         ]);
 
         $res = $this->postJson('/api/auth/mobile/login', [
-            'email' => 'forever@example.com',
+            'email' => 'forever@gmail.com',
             'password' => 'StrongPass1!',
             'device_name' => 'My Phone',
         ])->assertOk()

@@ -22,7 +22,7 @@ final class LoginMobileControllerTest extends TestCase
         $this->app->instance(LoginMobileContract::class, $mock);
 
         $this->postJson('/api/auth/mobile/login', [
-            'email' => 'x@example.com', 'password' => 'x', 'device_name' => 'dev',
+            'email' => 'x@gmail.com', 'password' => 'x', 'device_name' => 'dev',
         ])->assertStatus(401)->assertJson(['message' => 'Invalid credentials.']);
     }
 
@@ -34,7 +34,7 @@ final class LoginMobileControllerTest extends TestCase
         $this->app->instance(LoginMobileContract::class, $mock);
 
         $this->postJson('/api/auth/mobile/login', [
-            'email' => 'y@example.com', 'password' => 'ok', 'device_name' => 'dev',
+            'email' => 'y@gmail.com', 'password' => 'ok', 'device_name' => 'dev',
         ])->assertStatus(403)->assertJson(['message' => 'Please verify your email before continuing.']);
     }
 }

@@ -27,7 +27,7 @@ final class LoginMobileActionTest extends TestCase
     public function it_throws_invalid_credentials_for_bad_password(): void
     {
         User::factory()->create([
-            'email'             => 'jane@example.com',
+            'email'             => 'jane.doe@gmail.com',
             'password'          => Hash::make('Correct#123'),
             'email_verified_at' => now(),
         ]);
@@ -36,7 +36,7 @@ final class LoginMobileActionTest extends TestCase
         $this->expectExceptionMessage('Invalid credentials.');
         $this->expectExceptionCode(401);
 
-        $this->action->execute('jane@example.com', 'wrong', 'Pixel 7');
+        $this->action->execute('jane.doe@gmail.com', 'wrong', 'Pixel 7');
     }
 
     #[\PHPUnit\Framework\Attributes\Test]

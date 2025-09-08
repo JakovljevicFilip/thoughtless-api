@@ -35,14 +35,32 @@ class VerifyEmailTest extends TestCase
     public function user_can_confirm_their_email_address(): void
     {
         Event::fake();
-        $user = User::factory()->unverified()->create();
+        $user = User::factory()->unverified()->create([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+        ]);
 
         $token = $this->makeFrontendToken($user, now()->addHour());
 
-        $this->postJson('/api/email/verify', [
+        $response = $this->postJson('/api/email/verify', [
             'id'    => (string) $user->id,
             'token' => $token,
-        ])->assertOk();
+        ]);
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'first_name',
+                'last_name',
+                'email',
+                'token',
+            ])
+            ->assertJsonFragment([
+                'id'         => $user->id,
+                'first_name' => 'John',
+                'last_name'  => 'Doe',
+                'email'      => $user->email,
+            ]);
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         Event::assertDispatched(Verified::class);
@@ -63,18 +81,22 @@ class VerifyEmailTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function already_verified_user_passes_verification(): void
+    public function already_verified_user_cannot_use_link_again(): void
     {
         Event::fake();
-        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $user  = User::factory()->create(['email_verified_at' => now()]);
         $token = $this->makeFrontendToken($user, now()->addHour());
 
-        $this->actingAs($user)->postJson('/api/email/verify', [
+        $this->postJson('/api/email/verify', [
             'id'    => (string) $user->id,
             'token' => $token,
-        ])->assertOk();
+        ])
+            ->assertStatus(409)
+            ->assertJson(['message' => 'Email already verified.']);
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
+        $this->assertGuest();
         Event::assertNotDispatched(Verified::class);
     }
 
@@ -82,5 +104,4 @@ class VerifyEmailTest extends TestCase
     {
         return app(EmailVerificationTokenFactory::class)->make($user, $expiresAt);
     }
-
 }
