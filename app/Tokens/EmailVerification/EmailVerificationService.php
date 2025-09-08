@@ -19,10 +19,12 @@ final class EmailVerificationService
         if (! $user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
             event(new Verified($user));
+
+            // Only log in on first-time verification
+            Auth::login($user);
+
             $justVerified = true;
         }
-
-        Auth::login($user);
 
         return $justVerified;
     }

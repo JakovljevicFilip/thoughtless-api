@@ -81,18 +81,22 @@ class VerifyEmailTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function already_verified_user_passes_verification(): void
+    public function already_verified_user_cannot_use_link_again(): void
     {
         Event::fake();
-        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $user  = User::factory()->create(['email_verified_at' => now()]);
         $token = $this->makeFrontendToken($user, now()->addHour());
 
-        $this->actingAs($user)->postJson('/api/email/verify', [
+        $this->postJson('/api/email/verify', [
             'id'    => (string) $user->id,
             'token' => $token,
-        ])->assertOk();
+        ])
+            ->assertStatus(409)
+            ->assertJson(['message' => 'Email already verified.']);
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
+        $this->assertGuest();
         Event::assertNotDispatched(Verified::class);
     }
 
