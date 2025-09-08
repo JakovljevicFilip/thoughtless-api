@@ -95,6 +95,20 @@ services:
             - '/dev/shm:/dev/shm'
         networks:
             - thoughtless
+    queue:
+      image: sail-8.4/app
+      volumes:
+        - .:/var/www/html
+      networks:
+        - thoughtless
+      depends_on:
+        - redis
+        - pgsql
+      restart: unless-stopped
+      command: php artisan queue:work --verbose --tries=3 --timeout=90
+      environment:
+        WWWUSER: '${WWWUSER}'
+        WWWGROUP: '${WWWGROUP}'
 
 networks:
     thoughtless:
