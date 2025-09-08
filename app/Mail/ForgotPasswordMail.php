@@ -17,8 +17,8 @@ final class ForgotPasswordMail extends Mailable implements ShouldQueue
         $firstName = $this->user->first_name ?? $this->user->name ?? '';
 
         $this->subject = "Hey {$firstName}, did you forget your password?";
-        $this->view = 'emails.auth.passwords.reset';
-        $this->textView = 'emails.auth.passwords.reset_plain';
+        $this->view = 'emails.auth.password.reset.reset';
+        $this->textView = 'emails.auth.password.reset.reset_plain';
 
         $this->viewData = [
             'suite'     => config('app.suite_name'),

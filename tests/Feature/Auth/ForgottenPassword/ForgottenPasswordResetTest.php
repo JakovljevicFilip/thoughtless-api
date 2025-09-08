@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Auth\ForgottenPassword;
 
+use App\Mail\PasswordChangedMail;
 use App\Models\User;
 // use App\Notifications\PasswordChangedNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
@@ -124,5 +126,26 @@ class ForgottenPasswordResetTest extends TestCase
         //     $user,
         //     PasswordChangedNotification::class
         // );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_emails_the_user_that_their_password_was_changed(): void
+    {
+        Mail::fake();
+
+        $user  = User::factory()->create(['email' => 'jane@example.com']);
+        $token = Password::createToken($user);
+
+        $this->postJson('/api/user/forgot-password/reset', [
+            'email'                 => $user->email,
+            'password'              => 'brand-new-password',
+            'password_confirmation' => 'brand-new-password',
+            'token'                 => $token,
+        ])->assertStatus(200);
+
+        Mail::assertSent(
+            PasswordChangedMail::class,
+            fn (PasswordChangedMail $m) => $m->hasTo('jane@example.com') && $m->user->is($user)
+        );
     }
 }
