@@ -15,10 +15,15 @@ final class VerifyEmailController extends Controller
         EmailVerificationService $service
     ): JsonResponse {
         $user = $request->userForVerification();
-        $service->markVerifiedAndLogin($user);
+        $wasJustVerified = $service->markVerifiedAndLogin($user);
 
         return response()->json([
-            'message' => $user->wasChanged('email_verified_at')
+            'id'         => $user->id,
+            'first_name' => $user->first_name,
+            'last_name'  => $user->last_name,
+            'email'      => $user->email,
+            'token'      => $user->createToken('auth_token')->plainTextToken,
+            'message'    => $wasJustVerified
                 ? 'Email verified successfully.'
                 : 'Email already verified.',
         ]);

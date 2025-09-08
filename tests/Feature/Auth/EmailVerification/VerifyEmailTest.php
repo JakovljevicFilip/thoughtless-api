@@ -35,14 +35,32 @@ class VerifyEmailTest extends TestCase
     public function user_can_confirm_their_email_address(): void
     {
         Event::fake();
-        $user = User::factory()->unverified()->create();
+        $user = User::factory()->unverified()->create([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+        ]);
 
         $token = $this->makeFrontendToken($user, now()->addHour());
 
-        $this->postJson('/api/email/verify', [
+        $response = $this->postJson('/api/email/verify', [
             'id'    => (string) $user->id,
             'token' => $token,
-        ])->assertOk();
+        ]);
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'first_name',
+                'last_name',
+                'email',
+                'token',
+            ])
+            ->assertJsonFragment([
+                'id'         => $user->id,
+                'first_name' => 'John',
+                'last_name'  => 'Doe',
+                'email'      => $user->email,
+            ]);
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         Event::assertDispatched(Verified::class);
@@ -82,5 +100,4 @@ class VerifyEmailTest extends TestCase
     {
         return app(EmailVerificationTokenFactory::class)->make($user, $expiresAt);
     }
-
 }
