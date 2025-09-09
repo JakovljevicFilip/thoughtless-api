@@ -9,9 +9,13 @@ use Illuminate\Http\JsonResponse;
 
 class CreateThoughtController extends Controller
 {
-    public function store(StoreThoughtRequest $request): JsonResponse
+    public function store(StoreThoughtRequest $request)
     {
-        $thought = Thought::create($request->validated());
+        $validated = $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+
+        $thought = $request->user()->thoughts()->create($validated);
 
         return response()->json($thought, 201);
     }
