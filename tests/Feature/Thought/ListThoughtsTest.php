@@ -74,7 +74,7 @@ final class ListThoughtsTest extends TestCase
 
         $res->assertOk()
             ->assertJsonStructure([
-                'data' => [['id','content','created_at','updated_at']],
+                'data' => [['id','content','created_at']],
             ]);
 
         $thoughts = $res->json('data');
