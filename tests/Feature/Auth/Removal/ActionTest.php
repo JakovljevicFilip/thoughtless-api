@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\DependsExternal;
 use Tests\TestCase;
 
 final class ActionTest extends TestCase
 {
     use RefreshDatabase;
 
-//    #[DependsExternal(\Tests\Feature\Auth\Login\Web\LoginWebTest::class, 'test_login_populates_sessions_user_id')]
+    #[DependsExternal(\Tests\Feature\Auth\Login\Web\LoginWebTest::class, 'test_login_populates_sessions_user_id')]
     #[\PHPUnit\Framework\Attributes\Test]
     public function user_is_marked_for_deletion_and_logged_out_everywhere(): void
     {
