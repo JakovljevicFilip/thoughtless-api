@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth\ForgottenPassword;
 
 use App\Mail\PasswordChangedMail;
 use App\Models\User;
-// use App\Notifications\PasswordChangedNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
