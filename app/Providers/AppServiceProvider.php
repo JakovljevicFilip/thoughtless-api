@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Actions\Auth\CancellationAction;
 use App\Actions\Auth\LoginMobileAction;
 use App\Actions\Auth\LoginWebAction;
 use App\Actions\Auth\ResetForgotPasswordAction;
 use App\Actions\Auth\ScheduleAccountRemovalAction;
 use App\Actions\Auth\VerifyForgotForgotPasswordAction;
+use App\Contracts\Auth\CancellationActionContract;
 use App\Contracts\Auth\LoginMobileContract;
 use App\Contracts\Auth\LoginWebContract;
 use App\Contracts\Auth\ResetForgotPasswordContract;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VerifyForgotPasswordContract::class, VerifyForgotForgotPasswordAction::class);
         $this->app->bind(ResetForgotPasswordContract::class, ResetForgotPasswordAction::class);
         $this->app->bind(ScheduleAccountRemovalContract::class, ScheduleAccountRemovalAction::class);
+        $this->app->bind(CancellationActionContract::class, CancellationAction::class);
     }
 
     public function boot(): void
