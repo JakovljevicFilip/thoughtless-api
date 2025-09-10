@@ -44,4 +44,14 @@ final class RequestTest extends TestCase
         $this->postJson('/api/user/cancel', ['user_id' => $user->id, 'token' => Str::random(64)])
             ->assertStatus(422)->assertJsonFragment(['message' => 'This cancellation link is invalid.']);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cannot_cancel_if_user_not_marked_for_deletion(): void
+    {
+        $user = User::factory()->create(['marked_for_deletion_at' => null]);
+        [$plain, $uid] = $this->makeToken($user);
+
+        $this->postJson('/api/user/cancel', ['user_id' => $uid, 'token' => $plain])
+            ->assertStatus(409)->assertJsonFragment(['message' => 'No deletion is scheduled.']);
+    }
 }
