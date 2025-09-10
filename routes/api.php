@@ -53,8 +53,10 @@ Route::prefix('auth/web')->middleware('spa')->group(function () {
 
 Route::middleware('auth:sanctum')->get('/me', MeController::class);
 
-Route::prefix('thoughts')->group(function () {
-    Route::post('/', [CreateThoughtController::class, 'store']);
-    Route::get('/', [ListingThoughtController::class, 'index']);
-    Route::delete('/{thought}', [DeleteThoughtController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('thoughts')->group(function () {
+        Route::post('/', [CreateThoughtController::class, 'store']);
+        Route::get('/', [ListingThoughtController::class, 'index']);
+        Route::delete('/{thought}', [DeleteThoughtController::class, 'destroy']);
+    });
 });

@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth\ForgottenPassword;
 
 use App\Mail\PasswordChangedMail;
 use App\Models\User;
-// use App\Notifications\PasswordChangedNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -119,13 +118,6 @@ class ForgottenPasswordResetTest extends TestCase
             'password_confirmation' => 'new-password',
             'token' => $token,
         ])->assertStatus(200);
-
-        // TODO: Add a a notification your password has been changed.
-        // Uncomment once PasswordChangedNotification + listener are in place
-        // Notification::assertSentTo(
-        //     $user,
-        //     PasswordChangedNotification::class
-        // );
     }
 
     #[\PHPUnit\Framework\Attributes\Test]

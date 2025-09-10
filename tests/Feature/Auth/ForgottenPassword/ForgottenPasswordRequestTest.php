@@ -121,7 +121,7 @@ class ForgottenPasswordRequestTest extends TestCase
         $this->assertSame($expectedSubject, $mail->subject);
 
         if (is_array($mail->view)) {
-            $this->assertSame('emails.auth.password.reset..reset', $mail->view['html']);
+            $this->assertSame('emails.auth.password.reset.reset', $mail->view['html']);
             $this->assertSame('emails.auth.password.reset.reset_plain', $mail->view['text']);
         } else {
             $this->assertSame('emails.auth.password.reset.reset', $mail->view);
@@ -140,14 +140,13 @@ class ForgottenPasswordRequestTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function it_actually_sends_a_password_reset_email_to_the_users_address()
+    public function it_sends_one_reset_notification_to_existing_user()
     {
+        Notification::fake();
         $user = User::factory()->create(['email' => 'jane@gmail.com']);
 
-        $response = $this->postJson('/api/user/forgot-password', [
-            'email' => $user->email,
-        ]);
+        $this->postJson('/api/user/forgot-password', ['email' => $user->email])->assertOk();
 
-        $response->assertStatus(200);
+        Notification::assertSentToTimes($user, ResetPasswordNotification::class, 1);
     }
 }
