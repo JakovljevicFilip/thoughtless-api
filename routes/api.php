@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Auth\AccountRemovalController;
 use App\Http\Controllers\Api\Auth\MeController;
 use App\Http\Controllers\Api\Auth\Mobile\LoginMobileController;
 use App\Http\Controllers\Api\Auth\Mobile\LogoutMobileController;
@@ -24,6 +25,10 @@ Route::prefix('user')->group(function () {
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
     Route::post('/forgot-password/verify', [PasswordResetVerifyController::class, 'store']);
     Route::post('/forgot-password/reset', [PasswordResetController::class, 'store']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('remove', [AccountRemovalController::class, 'store']);
+    });
 });
 
 Route::prefix('email')->group(function () {
