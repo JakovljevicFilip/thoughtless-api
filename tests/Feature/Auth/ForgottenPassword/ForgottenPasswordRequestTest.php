@@ -121,7 +121,7 @@ class ForgottenPasswordRequestTest extends TestCase
         $this->assertSame($expectedSubject, $mail->subject);
 
         if (is_array($mail->view)) {
-            $this->assertSame('emails.auth.password.reset..reset', $mail->view['html']);
+            $this->assertSame('emails.auth.password.reset.reset', $mail->view['html']);
             $this->assertSame('emails.auth.password.reset.reset_plain', $mail->view['text']);
         } else {
             $this->assertSame('emails.auth.password.reset.reset', $mail->view);
