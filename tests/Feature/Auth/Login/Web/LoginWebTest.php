@@ -60,4 +60,25 @@ class LoginWebTest extends TestCase
 
         $this->assertGuest('web');
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function test_login_populates_sessions_user_id(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'john@gmail.com',
+            'password' => Hash::make('StrongPass1!'),
+            'email_verified_at' => now(),
+        ]);
+
+        $this->csrf();
+        $this->postJson('/api/auth/web/login', [
+            'email' => 'john@gmail.com',
+            'password' => 'StrongPass1!',
+        ])->assertOk();
+        $this->getJson('/api/me')->assertOk();
+
+        $this->assertDatabaseHas('sessions', [
+            'user_id' => $user->id,
+        ]);
+    }
 }

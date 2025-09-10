@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('user')->group(function () {
+
     Route::post('/register', [RegisterUserController::class, 'store']);
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
     Route::post('/forgot-password/verify', [PasswordResetVerifyController::class, 'store']);
@@ -51,10 +52,12 @@ Route::prefix('auth/mobile')
             ->middleware('auth:sanctum');
     });
 
-Route::prefix('auth/web')->middleware('spa')->group(function () {
-    Route::post('/login', [LoginWebController::class, 'store']);
-    Route::post('/logout', [LogoutWebController::class, 'store'])->middleware('auth:web');
-});
+Route::prefix('auth/web')
+    ->middleware('spa')
+    ->group(function () {
+        Route::post('/login', [LoginWebController::class, 'store']);
+        Route::post('/logout', [LogoutWebController::class, 'store'])->middleware('auth:web');
+    });
 
 Route::middleware('auth:sanctum')->get('/me', MeController::class);
 

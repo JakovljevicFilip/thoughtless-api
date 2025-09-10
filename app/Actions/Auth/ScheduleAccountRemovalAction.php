@@ -6,7 +6,9 @@ namespace App\Actions\Auth;
 use App\Contracts\Auth\ScheduleAccountRemovalContract;
 use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 final readonly class ScheduleAccountRemovalAction implements ScheduleAccountRemovalContract
 {
@@ -20,6 +22,17 @@ final readonly class ScheduleAccountRemovalAction implements ScheduleAccountRemo
 
         $this->db->transaction(function () use ($user) {
             $user->forceFill(['marked_for_deletion_at' => now()])->save();
+
+            if (Schema::hasTable('sessions')) {
+                DB::table('sessions')->where('user_id', $user->id)->delete();
+            }
+
+            if (Schema::hasTable('personal_access_tokens')) {
+                DB::table('personal_access_tokens')
+                    ->where('tokenable_type', $user::class)
+                    ->where('tokenable_id', $user->id)
+                    ->delete();
+            }
         });
     }
 }

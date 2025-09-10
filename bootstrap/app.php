@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -45,14 +44,14 @@ return Application::configure(basePath: dirname(__DIR__))
          *    ALWAYS run with session + CSRF (cookie/web flow), e.g. GET /me.
          */
         $middleware->group('spa', [
-            // Treat requests from SPA origins as "stateful" (important in dev: localhost:9000)
+            // Treat requests from SPA origins as "stateful"
             EnsureFrontendRequestsAreStateful::class,
 
             // Standard "web" stack bits:
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-            AuthenticateSession::class, // ← bridges the session to an authenticated user for Sanctum
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
