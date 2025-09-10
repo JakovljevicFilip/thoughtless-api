@@ -27,4 +27,13 @@ final class RequestTest extends TestCase
         $response = $this->postRemove(['password' => 'irrelevant']);
         $response->assertStatus(401);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function password_is_required(): void
+    {
+        $user = User::factory()->create(['password' => bcrypt('secret123!')]);
+
+        $response = $this->postRemove(['password' => ''], $user);
+        $response->assertStatus(422)->assertJsonValidationErrors('password');
+    }
 }
