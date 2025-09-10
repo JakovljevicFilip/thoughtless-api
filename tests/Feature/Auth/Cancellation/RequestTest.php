@@ -39,10 +39,20 @@ final class RequestTest extends TestCase
     public function token_must_match_to_the_existing_tokens(): void
     {
         $user = User::factory()->create(['marked_for_deletion_at' => now()]);
-        $this->makeToken($user, now()->addHour());
+        $this->makeToken($user, now());
 
         $this->postJson('/api/user/cancel', ['user_id' => $user->id, 'token' => Str::random(64)])
             ->assertStatus(422)->assertJsonFragment(['message' => 'This cancellation link is invalid.']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function token_can_expire(): void
+    {
+        $user = User::factory()->create(['marked_for_deletion_at' => now()]);
+        [$plain, $uid] = $this->makeToken($user, now()->subHour());
+
+        $this->postJson('/api/user/cancel', ['user_id' => $uid, 'token' => $plain])
+            ->assertStatus(422)->assertJsonFragment(['message' => 'This cancellation link has expired.']);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Actions\Auth;
 
 use App\Contracts\Auth\CancellationActionContract;
+use App\Exceptions\Auth\ExpiredCancellationToken;
 use App\Exceptions\Auth\InvalidCancellationToken;
 use App\Exceptions\Auth\NoDeletionScheduled;
 use App\Exceptions\Auth\UserNotFound;
@@ -29,6 +30,9 @@ final readonly class CancellationAction implements CancellationActionContract
 
         if (! $row || ! password_verify($plainToken, (string) $row->token_hash)) {
             throw new InvalidCancellationToken();
+        }
+        if (now()->greaterThan($row->expires_at)) {
+            throw new ExpiredCancellationToken();
         }
     }
 }
