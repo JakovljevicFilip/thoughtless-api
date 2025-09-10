@@ -9,10 +9,13 @@ use App\Exceptions\Auth\InvalidCancellationToken;
 use App\Exceptions\Auth\NoDeletionScheduled;
 use App\Exceptions\Auth\UserNotFound;
 use App\Models\User;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 
 final readonly class CancellationAction implements CancellationActionContract
 {
+    public function __construct(private ConnectionInterface $db) {}
+
     public function execute(string $userId, string $plainToken): void
     {
         /** @var User|null $user */
@@ -34,5 +37,10 @@ final readonly class CancellationAction implements CancellationActionContract
         if (now()->greaterThan($row->expires_at)) {
             throw new ExpiredCancellationToken();
         }
+
+        $this->db->transaction(function () use ($user) {
+            $user->forceFill(['marked_for_deletion_at' => null])->save();
+            DB::table('deletion_cancellation_tokens')->where('user_id', $user->id)->delete(); // single-use
+        });
     }
 }

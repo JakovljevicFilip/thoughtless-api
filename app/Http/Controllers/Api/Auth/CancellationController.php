@@ -15,6 +15,6 @@ final class CancellationController extends Controller
     {
         $data = $request->validated();
         $this->cancel->execute($data['user_id'], $data['token']);
-        return response()->json([]);
+        return response()->json(['message' => 'Account deletion canceled.']);
     }
 }
