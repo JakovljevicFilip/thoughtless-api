@@ -16,6 +16,6 @@ final class AccountRemovalController extends Controller
     public function store(AccountRemovalRequest $request): JsonResponse
     {
         $this->schedule->execute($request->user(), (string) $request->validated('password'));
-        return response()->json([]);
+        return response()->json(['message' => 'Account deletion scheduled.']);
     }
 }

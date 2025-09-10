@@ -47,4 +47,18 @@ final class RequestTest extends TestCase
             'message' => 'The provided password is incorrect.',
         ]);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function on_valid_password_the_request_proceeds(): void
+    {
+        $user = User::factory()->create(['password' => bcrypt('secret123!')]);
+
+        $response = $this->postRemove(['password' => 'secret123!'], $user);
+        $response->assertOk()->assertJsonFragment([
+            'message' => 'Account deletion scheduled.',
+        ]);
+
+        $user->refresh();
+        $this->assertNotNull($user->marked_for_deletion_at);
+    }
 }
