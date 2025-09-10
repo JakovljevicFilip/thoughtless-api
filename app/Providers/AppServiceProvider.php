@@ -8,12 +8,14 @@ use App\Actions\Auth\LoginWebAction;
 use App\Actions\Auth\ResetForgotPasswordAction;
 use App\Actions\Auth\ScheduleAccountRemovalAction;
 use App\Actions\Auth\VerifyForgotForgotPasswordAction;
+use App\Contracts\Auth\AccountRemovalServiceContract;
 use App\Contracts\Auth\CancellationActionContract;
 use App\Contracts\Auth\LoginMobileContract;
 use App\Contracts\Auth\LoginWebContract;
 use App\Contracts\Auth\ResetForgotPasswordContract;
 use App\Contracts\Auth\ScheduleAccountRemovalContract;
 use App\Contracts\Auth\VerifyForgotPasswordContract;
+use App\Services\Auth\AccountRemovalService;
 use App\Tokens\EmailVerification\EmailVerificationTokenFactory;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ResetForgotPasswordContract::class, ResetForgotPasswordAction::class);
         $this->app->bind(ScheduleAccountRemovalContract::class, ScheduleAccountRemovalAction::class);
         $this->app->bind(CancellationActionContract::class, CancellationAction::class);
+        $this->app->bind(AccountRemovalServiceContract::class, AccountRemovalService::class);
     }
 
     public function boot(): void

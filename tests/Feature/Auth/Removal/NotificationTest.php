@@ -27,14 +27,12 @@ final class NotificationTest extends TestCase
             ->postJson('/api/user/remove', ['password' => 'pw'])
             ->assertOk();
 
-        Mail::assertSent(AccountRemovalScheduledMail::class, function ($mailable) use ($user) {
-            /** @var AccountRemovalScheduledMail $mailable */
-            $this->assertSame('Your account will be deleted in 24 hours', $mailable->subject);
+        Mail::assertSent(AccountRemovalScheduledMail::class, function (AccountRemovalScheduledMail $mailable) use ($user) {
+            $this->assertSame('Your account will be deleted in 24 hours', $mailable->envelope()->subject);
+            $this->assertSame('emails.auth.removal.removal', $mailable->content()->view);
+            $this->assertSame('emails.auth.removal.removal_plain', $mailable->content()->text);
+            $this->assertTrue($mailable->hasTo($user->email));
             $this->assertSame($user->id, $mailable->user->id);
-
-            $this->assertEquals('emails.auth.removal.removal', $mailable->view);
-            $this->assertEquals('emails.auth.removal.removal_plain', $mailable->textView);
-
             return true;
         });
     }

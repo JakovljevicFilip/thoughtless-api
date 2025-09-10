@@ -4,25 +4,33 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
 
 final class AccountRemovalScheduledMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    public function __construct(public User $user, public int $graceHours, public string $cancelUrl) {}
 
-    public function __construct(public User $user, public int $graceHours)
+    public function envelope(): Envelope
     {
-        $this->subject("Your account will be deleted in {$graceHours} hours")
-            ->view('emails.auth.removal.removal')
-            ->text('emails.auth.removal.removal_plain')
-            ->with([
-                'suite' => config('app.suite_name'),
-//                TODO: I don't need to pass logo every time.
-                'logo' => asset('icons/favicon-512x512.png'),
-                'cancelUrl' => url('/login'),
-                'hours' => $graceHours,
-            ]);
+        return new Envelope(
+            subject: "Your account will be deleted in {$this->graceHours} hours"
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.auth.removal.removal',
+            text: 'emails.auth.removal.removal_plain',
+            with: [
+                'suite'     => config('app.suite_name'),
+                'logo'      => asset('icons/favicon-512x512.png'),
+                'hours'     => $this->graceHours,
+                'cancelUrl' => $this->cancelUrl,
+            ]
+        );
     }
 }
+
