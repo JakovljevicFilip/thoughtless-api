@@ -36,4 +36,15 @@ final class RequestTest extends TestCase
         $response = $this->postRemove(['password' => ''], $user);
         $response->assertStatus(422)->assertJsonValidationErrors('password');
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function password_must_match_current_users_password(): void
+    {
+        $user = User::factory()->create(['password' => bcrypt('secret123!')]);
+
+        $response = $this->postRemove(['password' => 'wrong-password'], $user);
+        $response->assertStatus(422)->assertJsonFragment([
+            'message' => 'The provided password is incorrect.',
+        ]);
+    }
 }

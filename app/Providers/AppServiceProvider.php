@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Actions\Auth\LoginMobileAction;
 use App\Actions\Auth\LoginWebAction;
 use App\Actions\Auth\ResetForgotPasswordAction;
+use App\Actions\Auth\ScheduleAccountRemovalAction;
 use App\Actions\Auth\VerifyForgotForgotPasswordAction;
 use App\Contracts\Auth\LoginMobileContract;
 use App\Contracts\Auth\LoginWebContract;
 use App\Contracts\Auth\ResetForgotPasswordContract;
+use App\Contracts\Auth\ScheduleAccountRemovalContract;
 use App\Contracts\Auth\VerifyForgotPasswordContract;
 use App\Tokens\EmailVerification\EmailVerificationTokenFactory;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginWebContract::class, LoginWebAction::class);
         $this->app->bind(VerifyForgotPasswordContract::class, VerifyForgotForgotPasswordAction::class);
         $this->app->bind(ResetForgotPasswordContract::class, ResetForgotPasswordAction::class);
+        $this->app->bind(ScheduleAccountRemovalContract::class, ScheduleAccountRemovalAction::class);
     }
 
     public function boot(): void
