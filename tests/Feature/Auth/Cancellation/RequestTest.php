@@ -12,9 +12,9 @@ final class RequestTest extends TestCase
     use RefreshDatabase;
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function user_id_is_required(): void
+    public function token_and_user_id_are_required(): void
     {
-        $response = $this->postJson('/api/user/cancel', []);
-        $response->assertStatus(422)->assertJsonValidationErrors('user_id');
+        $this->postJson('/api/user/cancel', [])->assertStatus(422)
+            ->assertJsonValidationErrors(['user_id','token']);
     }
 }

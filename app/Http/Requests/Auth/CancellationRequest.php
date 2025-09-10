@@ -14,6 +14,9 @@ final class CancellationRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['user_id' => ['required','uuid','exists:users,id']];
+        return [
+            'user_id' => ['required','uuid','exists:users,id'],
+            'token'   => ['required','string','min:32'],
+        ];
     }
 }
