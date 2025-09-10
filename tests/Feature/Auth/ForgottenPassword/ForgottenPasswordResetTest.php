@@ -119,13 +119,6 @@ class ForgottenPasswordResetTest extends TestCase
             'password_confirmation' => 'new-password',
             'token' => $token,
         ])->assertStatus(200);
-
-        // TODO: Add a a notification your password has been changed.
-        // Uncomment once PasswordChangedNotification + listener are in place
-        // Notification::assertSentTo(
-        //     $user,
-        //     PasswordChangedNotification::class
-        // );
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
