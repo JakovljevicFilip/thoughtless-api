@@ -5,11 +5,13 @@ namespace App\Actions\Auth;
 
 use App\Contracts\Auth\ScheduleAccountRemovalContract;
 use App\Jobs\PruneDeletedUserJob;
+use App\Mail\AccountRemovalScheduledMail;
 use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 
 final readonly class ScheduleAccountRemovalAction implements ScheduleAccountRemovalContract
@@ -37,6 +39,8 @@ final readonly class ScheduleAccountRemovalAction implements ScheduleAccountRemo
             }
 
             $grace = (int) Config::get('auth.deletion_grace_hours', 24);
+            Mail::to($user->email)->send(new AccountRemovalScheduledMail($user, $grace));
+
             PruneDeletedUserJob::dispatch($user->id)->delay(now()->addHours($grace));
         });
     }
