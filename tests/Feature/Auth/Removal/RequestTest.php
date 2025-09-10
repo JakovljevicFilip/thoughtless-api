@@ -6,6 +6,7 @@ namespace Tests\Feature\Auth\Removal;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -51,6 +52,7 @@ final class RequestTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function on_valid_password_the_request_proceeds(): void
     {
+        Queue::fake();
         $user = User::factory()->create(['password' => bcrypt('secret123!')]);
 
         $response = $this->postRemove(['password' => 'secret123!'], $user);

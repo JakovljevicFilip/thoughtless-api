@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth\Removal;
 
+use App\Jobs\PruneDeletedUserJob;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\DependsExternal;
@@ -19,6 +22,7 @@ final class ActionTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function user_is_marked_for_deletion_and_logged_out_everywhere(): void
     {
+        Queue::fake();
         $user = User::factory()->create(['password' => bcrypt('pw-123456')]);
 
         DB::table('sessions')->insert([
@@ -57,5 +61,22 @@ final class ActionTest extends TestCase
                 'tokenable_id'   => $user->id,
             ]);
         }
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function deletion_job_is_queued_with_configured_delay(): void
+    {
+        Queue::fake();
+        Config::set('auth.deletion_grace_hours', 24);
+
+        $user = User::factory()->create(['password' => bcrypt('pw')]);
+
+        $this->actingAs($user)->postJson('/api/user/remove', ['password' => 'pw'])->assertOk();
+
+        Queue::assertPushed(PruneDeletedUserJob::class, function ($job) use ($user) {
+            return $job->userId === $user->id;
+        });
+
+        $user->refresh();
     }
 }

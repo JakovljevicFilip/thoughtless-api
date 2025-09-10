@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Actions\Auth;
 
 use App\Contracts\Auth\ScheduleAccountRemovalContract;
+use App\Jobs\PruneDeletedUserJob;
 use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +35,9 @@ final readonly class ScheduleAccountRemovalAction implements ScheduleAccountRemo
                     ->where('tokenable_id', $user->id)
                     ->delete();
             }
+
+            $grace = (int) Config::get('auth.deletion_grace_hours', 24);
+            PruneDeletedUserJob::dispatch($user->id)->delay(now()->addHours($grace));
         });
     }
 }
