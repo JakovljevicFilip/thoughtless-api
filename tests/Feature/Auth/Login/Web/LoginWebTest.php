@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
+//TODO: If user logs in while their account is account is marked for removal, the removal is cancelled.
 class LoginWebTest extends TestCase
 {
     use RefreshDatabase;
@@ -59,5 +60,26 @@ class LoginWebTest extends TestCase
             ->assertJson(['message' => 'Please verify your email before continuing.']);
 
         $this->assertGuest('web');
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function test_login_populates_sessions_user_id(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'john@gmail.com',
+            'password' => Hash::make('StrongPass1!'),
+            'email_verified_at' => now(),
+        ]);
+
+        $this->csrf();
+        $this->postJson('/api/auth/web/login', [
+            'email' => 'john@gmail.com',
+            'password' => 'StrongPass1!',
+        ])->assertOk();
+        $this->getJson('/api/me')->assertOk();
+
+        $this->assertDatabaseHas('sessions', [
+            'user_id' => $user->id,
+        ]);
     }
 }
