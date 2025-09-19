@@ -18,15 +18,19 @@ final class VerifyEmailRequest extends FormRequest
 
     public function rules(): array
     {
-        $this->user = User::findOrFail($this->input('id'));
+        $this->user = User::where('email', $this->input('email'))->first();
 
         return [
-            'id'    => ['required', 'uuid', 'exists:users,id'],
-            'token' => ['required', 'string', new ValidEmailVerificationToken($this->user)],
+            'email' => ['required', 'email', 'exists:users,email'],
+            'token' => [
+                'required',
+                'string',
+                $this->user ? new ValidEmailVerificationToken($this->user) : 'prohibited',
+            ],
         ];
     }
 
-    public function userForVerification(): User
+    public function userForVerification(): ?User
     {
         return $this->user;
     }

@@ -21,7 +21,7 @@ final class EmailVerificationTokenFactory
         $signed = URL::temporarySignedRoute(
             'verification.verify',
             $imm,
-            ['id' => (string) $user->id, 'hash' => $hash]
+            ['email' => $user->email, 'hash' => $hash]
         );
 
         parse_str(parse_url($signed, PHP_URL_QUERY) ?: '', $query);

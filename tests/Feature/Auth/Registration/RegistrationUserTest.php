@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth\Registration;
 
+use App\Mail\VerificationMail;
 use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegistrationUserTest extends TestCase
@@ -56,7 +56,7 @@ class RegistrationUserTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function verification_email_contains_expected_link_format(): void
     {
-        Notification::fake();
+        Mail::fake();
 
         $payload = [
             'first_name' => 'Alice',
@@ -70,14 +70,19 @@ class RegistrationUserTest extends TestCase
 
         $user = User::where('email', $payload['email'])->firstOrFail();
 
-        Notification::assertSentTo($user, VerifyEmail::class, function (VerifyEmail $notification, array $channels) use ($user) {
-            $mail = $notification->toMail($user);
+        Mail::assertSent(VerificationMail::class, function (VerificationMail $mail) use ($user) {
             $rendered = (string) $mail->render();
 
-            $feUrl   = preg_quote(rtrim(config('app.frontend_url'), '/'), '/');
-            $pattern = "/{$feUrl}\/verify\/{$user->id}\/[A-Za-z0-9=_\-]+/";
+            $feUrl = preg_quote(rtrim(config('app.frontend_url'), '/'), '/');
+            $email = preg_quote(urlencode($user->email), '/');
+
+            // Path params instead of query params
+            $pattern = "#{$feUrl}/verify/{$email}/[^\"' ]+#";
 
             $this->assertMatchesRegularExpression($pattern, $rendered);
+
+            $expectedLogo = asset('icons/favicon-512x512.png');
+            $this->assertStringContainsString($expectedLogo, $rendered);
 
             return true;
         });

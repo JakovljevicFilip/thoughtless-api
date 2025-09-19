@@ -40,7 +40,7 @@ Route::prefix('email')->group(function () {
 
     Route::post('/verify', VerifyEmailController::class)->name('verification.verify');
     Route::post('/resend', ResendVerificationController::class)
-        ->middleware('throttle:1,10')
+        ->middleware('throttle:3,10')
         ->name('verification.resend');
 });
 

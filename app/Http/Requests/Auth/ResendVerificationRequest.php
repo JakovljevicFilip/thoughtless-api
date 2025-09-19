@@ -1,15 +1,16 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Rules\MustBeUnverified;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
 
 final class ResendVerificationRequest extends FormRequest
 {
+    private ?User $user = null;
+
     public function authorize(): bool
     {
         return true;
@@ -17,29 +18,20 @@ final class ResendVerificationRequest extends FormRequest
 
     public function rules(): array
     {
+        $this->user = User::where('email', $this->input('email'))->first();
+
         return [
-            'id' => ['required', 'uuid'],
+            'email' => [
+                'required',
+                'string',
+                'exists:users,email',
+                $this->user ? new MustBeUnverified($this->user) : 'prohibited',
+            ],
         ];
-    }
-
-    public function withValidator(Validator $validator): void
-    {
-        $validator->after(function (Validator $v) {
-            $user = $this->targetUser();
-
-            if (! $user) {
-                $v->errors()->add('id', 'User not found.');
-                return;
-            }
-
-            if ($user->hasVerifiedEmail()) {
-                $v->errors()->add('id', 'Email already verified.');
-            }
-        });
     }
 
     public function targetUser(): ?User
     {
-        return User::find($this->input('id'));
+        return $this->user;
     }
 }
