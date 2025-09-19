@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Mail\VerificationMail;
 use App\Notifications\ResetPasswordNotification;
+use App\Tokens\EmailVerification\EmailVerificationTokenFactory;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
@@ -84,4 +88,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Thought::class);
     }
 
+    public function sendEmailVerificationNotification(): void
+    {
+        $factory = app(EmailVerificationTokenFactory::class);
+        $token = $factory->make($this, CarbonImmutable::now()->addMinutes(60));
+
+        Mail::to($this->email)->send(new VerificationMail($this, $token));
+    }
 }

@@ -33,7 +33,7 @@ final readonly class ValidEmailVerificationToken implements ValidationRule
             $fail('Invalid verification hash.');
         }
 
-        if (! $svc->signatureValid((string) $this->user->id, $parsed)) {
+        if (! $svc->signatureValid((string) $this->user->email, $parsed)) {
             $fail('Invalid verification signature.');
         }
     }

@@ -40,12 +40,12 @@ final class EmailVerificationTokenValidator
         );
     }
 
-    public function signatureValid(string $id, EmailVerificationToken $token): bool
+    public function signatureValid(string $email, EmailVerificationToken $token): bool
     {
         $expectedUrl = URL::temporarySignedRoute(
             'verification.verify',
             $token->expiresAt,
-            ['id' => (string) $id, 'hash' => $token->hash]
+            ['email' => (string) $email, 'hash' => $token->hash]
         );
 
         parse_str(parse_url($expectedUrl, PHP_URL_QUERY) ?: '', $query);

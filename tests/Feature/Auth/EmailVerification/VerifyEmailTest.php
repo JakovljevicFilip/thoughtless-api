@@ -23,7 +23,7 @@ class VerifyEmailTest extends TestCase
         $token = $this->makeFrontendToken($user, now()->subMinute());
 
         $this->postJson('/api/email/verify', [
-            'id'    => (string) $user->id,
+            'email'    => $user->email,
             'token' => $token,
         ])->assertStatus(422);
 
@@ -43,7 +43,7 @@ class VerifyEmailTest extends TestCase
         $token = $this->makeFrontendToken($user, now()->addHour());
 
         $response = $this->postJson('/api/email/verify', [
-            'id'    => (string) $user->id,
+            'email'    => $user->email,
             'token' => $token,
         ]);
 
@@ -73,7 +73,7 @@ class VerifyEmailTest extends TestCase
         $token = $this->makeFrontendToken($user, now()->addHour());
 
         $this->postJson('/api/email/verify', [
-            'id'    => (string) $user->id,
+            'email'    => (string) $user->email,
             'token' => $token,
         ])->assertOk();
 
@@ -89,7 +89,7 @@ class VerifyEmailTest extends TestCase
         $token = $this->makeFrontendToken($user, now()->addHour());
 
         $this->postJson('/api/email/verify', [
-            'id'    => (string) $user->id,
+            'email'    => (string) $user->email,
             'token' => $token,
         ])
             ->assertStatus(409)
