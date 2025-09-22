@@ -1,6 +1,6 @@
 @extends('emails.layouts.email_layout')
 
-@section('title') We are sad to see you go :( @endsection
+@section('title') We are sad to see you go @endsection
 @section('heading') You requested the account removal @endsection
 
 @section('body')
@@ -12,5 +12,5 @@
 @section('cta_label') Cancel Account Deletion @endsection
 
 @section('note')
-    This link expires in {{ $hours }} hours. If you did not request this, no action is required.
+    This link expires in {{ $hours }} hours.
 @endsection
