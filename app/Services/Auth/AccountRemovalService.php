@@ -54,7 +54,7 @@ final readonly class AccountRemovalService implements AccountRemovalServiceContr
 
             // Email cancel link
             $cancelUrl = rtrim((string) config('app.frontend_url'), '/')
-                . '/cancel-deletion?uid=' . urlencode((string) $user->id)
+                . '/cancel-removal?id=' . urlencode((string) $user->id)
                 . '&token=' . urlencode($plain);
 
             Mail::to($user->email)->send(new AccountRemovalScheduledMail($user, $grace, $cancelUrl));

@@ -35,8 +35,8 @@ final class ActionTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $this->postJson('/api/user/cancel', ['user_id' => $user->id, 'token' => $plain])
-            ->assertOk()->assertJsonFragment(['message' => 'Account deletion canceled.']);
+        $this->postJson('/api/user/cancel-removal', ['user_id' => $user->id, 'token' => $plain])
+            ->assertOk()->assertJsonFragment(['message' => 'Account removal canceled.']);
 
         $user->refresh();
         $this->assertNull($user->marked_for_deletion_at);

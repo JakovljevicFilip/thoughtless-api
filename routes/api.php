@@ -31,7 +31,7 @@ Route::prefix('user')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('remove', [AccountRemovalController::class, 'store']);
     });
-    Route::post('cancel', [CancellationController::class, 'store']);
+    Route::post('cancel-removal', [CancellationController::class, 'store']);
 });
 
 Route::prefix('email')->group(function () {
