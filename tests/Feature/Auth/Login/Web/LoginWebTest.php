@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-//TODO: If user logs in while their account is account is marked for removal, the removal is cancelled.
 class LoginWebTest extends TestCase
 {
     use RefreshDatabase;
