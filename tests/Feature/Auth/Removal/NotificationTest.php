@@ -35,7 +35,7 @@ final class NotificationTest extends TestCase
             $this->assertSame($user->id, $mailable->user->id);
 
             $html = $mailable->render();
-            $this->assertStringContainsString('/cancel-removal', $html);
+            $this->assertStringContainsString('/cancel-removal?id', $html);
             return true;
         });
     }

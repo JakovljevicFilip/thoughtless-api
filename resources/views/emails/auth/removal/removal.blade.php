@@ -5,7 +5,7 @@
 
 @section('body')
     Your {{ $suite }} account and all related data will be removed in the next {{ $hours }} hours.<br />
-    If you changed your mind, you can cancel below.
+    If you changed your mind, you can cancel below or login to the application.
 @endsection
 
 @section('cta_url') {{ $cancelUrl }} @endsection
