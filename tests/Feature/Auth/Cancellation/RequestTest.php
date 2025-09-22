@@ -31,7 +31,7 @@ final class RequestTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function token_and_user_id_are_required(): void
     {
-        $this->postJson('/api/user/cancel', [])->assertStatus(422)
+        $this->postJson('/api/user/cancel-removal', [])->assertStatus(422)
             ->assertJsonValidationErrors(['user_id','token']);
     }
 
@@ -41,7 +41,7 @@ final class RequestTest extends TestCase
         $user = User::factory()->create(['marked_for_deletion_at' => now()]);
         $this->makeToken($user, now());
 
-        $this->postJson('/api/user/cancel', ['user_id' => $user->id, 'token' => Str::random(64)])
+        $this->postJson('/api/user/cancel-removal', ['user_id' => $user->id, 'token' => Str::random(64)])
             ->assertStatus(422)->assertJsonFragment(['message' => 'This cancellation link is invalid.']);
     }
 
@@ -51,7 +51,7 @@ final class RequestTest extends TestCase
         $user = User::factory()->create(['marked_for_deletion_at' => now()]);
         [$plain, $uid] = $this->makeToken($user, now()->subHour());
 
-        $this->postJson('/api/user/cancel', ['user_id' => $uid, 'token' => $plain])
+        $this->postJson('/api/user/cancel-removal', ['user_id' => $uid, 'token' => $plain])
             ->assertStatus(422)->assertJsonFragment(['message' => 'This cancellation link has expired.']);
     }
 
@@ -61,7 +61,7 @@ final class RequestTest extends TestCase
         $user = User::factory()->create(['marked_for_deletion_at' => null]);
         [$plain, $uid] = $this->makeToken($user);
 
-        $this->postJson('/api/user/cancel', ['user_id' => $uid, 'token' => $plain])
+        $this->postJson('/api/user/cancel-removal', ['user_id' => $uid, 'token' => $plain])
             ->assertStatus(409)->assertJsonFragment(['message' => 'No deletion is scheduled.']);
     }
 }

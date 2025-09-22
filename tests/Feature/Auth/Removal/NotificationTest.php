@@ -33,6 +33,9 @@ final class NotificationTest extends TestCase
             $this->assertSame('emails.auth.removal.removal_plain', $mailable->content()->text);
             $this->assertTrue($mailable->hasTo($user->email));
             $this->assertSame($user->id, $mailable->user->id);
+
+            $html = $mailable->render();
+            $this->assertStringContainsString('/cancel-removal', $html);
             return true;
         });
     }
