@@ -6,6 +6,7 @@ namespace Tests\Feature\Thought\Store;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 final class ActionTest extends TestCase
@@ -19,7 +20,7 @@ final class ActionTest extends TestCase
         $this->actingAs($user);
 
         $payload = [[
-            'id' => '0',
+            'id' => (string) Str::uuid(),
             'content' => 'Offline synced thought',
             'created_at' => now()->format('Y-m-d H:i:s'),
         ]];
@@ -44,12 +45,12 @@ final class ActionTest extends TestCase
 
         $payload = [
             [
-                'id' => '0',
+                'id' => (string) Str::uuid(),
                 'content' => 'First offline thought',
                 'created_at' => now()->format('Y-m-d H:i:s'),
             ],
             [
-                'id' => '1',
+                'id' => (string) Str::uuid(),
                 'content' => 'Second offline thought',
                 'created_at' => now()->subMinute()->format('Y-m-d H:i:s'),
             ],
@@ -79,7 +80,7 @@ final class ActionTest extends TestCase
         $this->actingAs($user);
 
         $payload = [[
-            'id' => '0',
+            'id' => (string) Str::uuid(),
             'content' => 'Returned model test',
             'created_at' => now()->format('Y-m-d H:i:s'),
         ]];
