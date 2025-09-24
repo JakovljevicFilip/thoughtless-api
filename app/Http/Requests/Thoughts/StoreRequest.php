@@ -23,7 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'thoughts' => ['required', 'array', 'min:1'],
-            'thoughts.*.id' => ['required', 'regex:/^\d+$/'],
+            'thoughts.*.id' => ['required', 'uuid'],
             'thoughts.*.content' => ['required', 'string', 'min:1'],
             'thoughts.*.created_at' => ['required', 'date_format:Y-m-d H:i:s'],
         ];
