@@ -10,6 +10,11 @@ class StoreController extends Controller
 {
     public function store(StoreRequest $request): JsonResponse
     {
-        return response()->json([], 201);
+        $thoughts = StoreAction::execute(
+            $request->user(),
+            $request->input('thoughts')
+        );
+
+        return response()->json($thoughts, 201);
     }
 }
