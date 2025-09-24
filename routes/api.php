@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Auth\Web\LogoutWebController;
 use App\Http\Controllers\Api\Thoughts\CreateThoughtController;
 use App\Http\Controllers\Api\Thoughts\DeleteThoughtController;
 use App\Http\Controllers\Api\Thoughts\ListingThoughtController;
+use App\Http\Controllers\Api\Thoughts\Store\StoreController;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -64,9 +65,14 @@ Route::prefix('auth/web')
 Route::middleware('auth:sanctum')->get('/me', MeController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
+//    TODO: Move to 'thought' prefix
     Route::prefix('thoughts')->group(function () {
         Route::post('/', [CreateThoughtController::class, 'store']);
         Route::get('/', [ListingThoughtController::class, 'index']);
         Route::delete('/{thought}', [DeleteThoughtController::class, 'destroy']);
+    });
+
+    Route::prefix('thought')->group(function () {
+        Route::post('/store', [StoreController::class, 'store']);
     });
 });
