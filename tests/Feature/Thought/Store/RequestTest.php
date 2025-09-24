@@ -19,4 +19,16 @@ final class RequestTest extends TestCase
 
         $response->assertStatus(401);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function thoughts_are_required()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->postJson('/api/thought/store', []);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('thoughts');
+    }
 }
