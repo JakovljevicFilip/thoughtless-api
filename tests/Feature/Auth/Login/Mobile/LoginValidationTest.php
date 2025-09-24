@@ -70,10 +70,10 @@ final class LoginValidationTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->csrf();
         $this->postJson('/api/auth/mobile/login', [
             'email' => 'john@gmail.com',
             'password' => 'StrongPass1!',
+            'device_name' => 'My Phone',
         ])->assertOk();
 
         $user->refresh();

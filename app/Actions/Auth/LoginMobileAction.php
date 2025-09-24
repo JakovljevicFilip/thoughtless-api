@@ -7,6 +7,7 @@ use App\Contracts\Auth\LoginMobileContract;
 use App\Exceptions\Auth\EmailNotVerified;
 use App\Exceptions\Auth\InvalidCredentials;
 use App\Models\User;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Hash;
 
 final class LoginMobileAction implements LoginMobileContract
@@ -30,6 +31,8 @@ final class LoginMobileAction implements LoginMobileContract
         if (! $user->hasVerifiedEmail()) {
             throw new EmailNotVerified();
         }
+
+        event(new Login('sanctum', $user, false));
 
         $user->tokens()->where('name', $deviceName)->delete();
 
