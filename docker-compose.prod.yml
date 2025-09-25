@@ -11,8 +11,10 @@ services:
     networks:
       - thoughtless
     depends_on:
-      - pgsql
-      - redis
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   nginx:
     build:
@@ -63,6 +65,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  queue:
+    image: thoughtless-php
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    networks:
+      - thoughtless
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    command: php artisan queue:work --verbose --tries=3 --timeout=90
 
 networks:
   thoughtless:

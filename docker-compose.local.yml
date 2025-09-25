@@ -24,11 +24,17 @@ services:
         networks:
             - thoughtless
         depends_on:
-            - pgsql
-            - redis
-            - meilisearch
-            - mailpit
-            - selenium
+          pgsql:
+            condition: service_healthy
+          redis:
+            condition: service_healthy
+          meilisearch:
+            condition: service_healthy
+          mailpit:
+            condition: service_started
+          selenium:
+            condition: service_started
+
     pgsql:
         image: postgres:14
         ports:
