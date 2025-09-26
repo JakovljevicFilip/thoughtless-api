@@ -79,3 +79,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/sanctum/csrf-cookie', [\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class, 'show'])
     ->middleware('web');
+
+Route::get('/debug-test', function () {
+    return response()->json(['ok' => true, 'time' => now()]);
+});
+
