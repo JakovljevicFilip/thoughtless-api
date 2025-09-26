@@ -76,3 +76,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/store', [StoreController::class, 'store']);
     });
 });
+
+Route::get('/sanctum/csrf-cookie', [\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class, 'show'])
+    ->middleware('web');
