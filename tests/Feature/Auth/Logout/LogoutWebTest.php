@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+// TODO: Switch entirely to opaque tokens.
 final class LogoutWebTest extends TestCase
 {
     use RefreshDatabase;
