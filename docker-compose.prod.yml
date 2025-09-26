@@ -5,9 +5,8 @@ services:
       context: .
       dockerfile: ./docker/php/Dockerfile
     image: thoughtless-php
-    env_file:
-      - .env
     volumes:
+      - ./.env:/var/www/html/.env          # bind mount .env file
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     networks:
@@ -71,6 +70,7 @@ services:
   queue:
     image: thoughtless-php
     volumes:
+      - ./.env:/var/www/html/.env          # bind mount .env for artisan too
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     networks:
